@@ -6,3 +6,48 @@
 *.log
 *.def
 *.vcxproj
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Other
+*.sln
+*.ilk
+*.pdb
+*.vcxproj*
+*.log
+*.ipch
+*.db
+*.suo
+
+Debug
