@@ -1,0 +1,19 @@
+ELECTRONIC AGREEMENT TO DISCLAIMER STATEMENT/CONDITIONS
+
+Broker: Alpari
+Account Number: 60523400
+Client/User: asdfff
+
+Acceptance of this disclaimer and use of this Expert Advisoer (EA) constitues an acknowlegement to it's contents and conditions.
+The end user/trader of this EA (xm7_Ccfp_Wkly_TradeMonitor_v91.ex4) agrees and fully understands that there absolutely no guarantees or representations
+of any kind written, verbal, or implied that this EA will result in profitable or no-profitable results. The end user/trader agrees to
+hold no other involved party liable for any incurred damages or losses due to use of this EA.  The end user/trader will have no claims direct
+or indirect against losses/damages that may be incurred. By selecting 'Yes' below, you acknowledge and agree to the
+statements presented in this disclaimer.
+
+Trading Forex (foreign exchange) on margin carries a high level of risk, and may not be suitable for all investors.
+The high degree of leverage can work against you as well as for you. Before deciding to invest in foreign exchange you
+should carefully consider your investment objectives, level of experience, and risk appetite. The possibility exists that
+you could sustain a loss of your initial investment and therefore you should not invest money that you cannot
+afford to lose. You should be aware of all the risks associated with foreign exchange trading seek advice from a licensed
+or certified independent financial adviser if you have any doubts.
