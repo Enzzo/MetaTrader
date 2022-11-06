@@ -27,14 +27,20 @@
 // #import
 //+------------------------------------------------------------------+
 
+
 class GUI_Object{
    string      _label;
    int         _x_position, _y_position, 
                _width, _height;
    ENUM_OBJECT _object;
+   GUI_Object  _sub_objects[];
 
 public:
    GUI_Object(){}
+   ~GUI_Object(){}
+   
+   void AttachObject(const GUI_Object&){};
+   void DetachObject(const GUI_Object&){};
 };
 
 struct Coordinates{
