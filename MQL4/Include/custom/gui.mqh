@@ -28,6 +28,11 @@
 //+------------------------------------------------------------------+
 
 
+//--------------------------------------------------------------------
+//
+//
+//
+//--------------------------------------------------------------------
 class GUI_Object{
    string      _label;
    int         _x_position, _y_position, 
@@ -39,8 +44,18 @@ public:
    GUI_Object(){}
    ~GUI_Object(){}
    
-   void AttachObject(const GUI_Object&){};
-   void DetachObject(const GUI_Object&){};
+   void AttachSubObject(const GUI_Object&){
+      ArrayResize(_sub_objects, ArraySize(_sub_objects)+1);
+   };
+   virtual void DetachSubObject(const GUI_Object&);
+};
+
+//--------------------------------------------------------------------
+//
+//
+//
+//--------------------------------------------------------------------
+class Text_Object : public GUI_Object{   
 };
 
 struct Coordinates{
