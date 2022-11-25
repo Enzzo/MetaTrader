@@ -33,21 +33,33 @@
 //
 //
 //--------------------------------------------------------------------
-class GUI_Object{
+class GUIObject{
    string      _label;
    int         _x_position, _y_position, 
                _width, _height;
+   int         _subobjects_count;
+   
    ENUM_OBJECT _object;
-   GUI_Object  _sub_objects[];
+   GUIObject   _subobject[];
 
 public:
-   GUI_Object(){}
-   ~GUI_Object(){}
+   GUIObject() = delete;
+   ~GUIObject(){
+      for(int i = 0; i < _subobjects_count; ++i){
+         _subobject[i].Delete();
+      }
+      this.Delete();
+   }
    
-   void AttachSubObject(const GUI_Object&){
-      ArrayResize(_sub_objects, ArraySize(_sub_objects)+1);
-   };
-   virtual void DetachSubObject(const GUI_Object&);
+   void Delete(){
+      if(ObjectFind(ChartID(), GetLabel());
+      ObjectDelete(ChartID(),this.GetLabel());
+   }
+   
+private:
+   string GetLabel() const {
+      return _label;
+   }
 };
 
 //--------------------------------------------------------------------
@@ -55,8 +67,11 @@ public:
 //
 //
 //--------------------------------------------------------------------
-class Text_Object : public GUI_Object{   
+class TextLabelObject : public GUIObject{
+public:
+   TextLabelObject();
 };
 
-struct Coordinates{
+class BitmabObject : public GUIObject{
+   
 };
