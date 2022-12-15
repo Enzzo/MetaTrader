@@ -1,6 +1,0 @@
-Symbol: 	Price: 	SL: 	TP: 	Risk:
-AUDUSD		1.3;		1.0		1,8		1
-AUDUSD		1.3;		1.0		1,8		1
-AUDUSD		1.3;		1.0		1,8		1
-AUDUSD		1.3;		1.0		1,8		1
-AUDUSD		1.3;		1.0		1,8		1
