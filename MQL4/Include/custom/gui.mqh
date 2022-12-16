@@ -52,7 +52,7 @@ public:
    }
    
    void Delete(){
-      if(ObjectFind(ChartID(), GetLabel());
+      // if(ObjectFind(ChartID(), GetLabel());
       ObjectDelete(ChartID(),this.GetLabel());
    }
    
