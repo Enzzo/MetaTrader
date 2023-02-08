@@ -515,10 +515,11 @@ bool CAppDialog::Create(const long chart,const string name,const int subwin,cons
 bool CAppDialog::CreateCommon(const long chart,const string name,const int subwin)
   {
 //--- save parameters
-   m_chart_id    =chart;
-   m_name        =name;
-   m_subwin      =subwin;
-   m_program_name=name;
+   m_chart_id     =chart;
+   m_name         =name;
+   m_subwin       =subwin;
+   m_program_name =name;
+   m_deinit_reason=WRONG_VALUE;
 //--- get unique ID
    m_instance_id=CreateInstanceId();
 //--- initialize chart object
