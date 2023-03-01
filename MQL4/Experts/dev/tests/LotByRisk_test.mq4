@@ -46,11 +46,15 @@
 
 #include <custom/Trade.mqh>
 
+#define PARENT = 
+
 CTrade trade;
 
 input int         MAGIC       = 111087;            // magic
 input string      COMMENT     = "";                // comment
 input ENUM_BASE_CORNER CORNER = CORNER_LEFT_UPPER;// base corner
+input int         X_OFFSET    = 10;                // X - offset
+input int         Y_OFFSET    = 10;                // Y - offset
 input int         FNT         = 7;                 // font
 input string      HK_TP       = "T";               // hotkey for TP
 input string      HK_SL       = "S";               // hotkey for SL
@@ -65,6 +69,7 @@ string t_line = pref + "_t_line";
 string s_line = pref + "_s_line";
 string p_line = pref + "_p_line";
 
+string parent = pref+"_RectLabel";
 int mtp = 1;
 
 int OnInit(){
@@ -77,16 +82,22 @@ int OnInit(){
    Comment("");
    ObjectsDelete();
    // RectLabelCreate(pref+"_RectLabel", 108,88, 106, 90, CORNER);   
-   LabelCreate(    pref+"_LabelCmnt", 70, 68,  3,      "Cmnt:", "Arial", FNT);
-   LabelCreate(    pref+"_LabelRisk", 70, 48,  3,      "Risk:", "Arial", FNT);
-   EditCreate(     pref+"_EditCmnt",  64, 86, 58,  18, "");
-   EditCreate(     pref+"_EditRisk",  64, 66, 58,  18, DoubleToString(RISK));
-   ButtonCreate(   pref+"_TR",        104,46, 100, 20, 3, "send order", "Arial", FNT, clrBlack, C'33,218,51');
-   ButtonCreate(   pref+"_CLS",       104,24, 100, 20, 3, "close orders", "Arial", FNT, clrBlack, clrRed);
+   // LabelCreate(    pref+"_LabelCmnt", 70, 68,  3,      "Cmnt:", "Arial", FNT);
+   // LabelCreate(    pref+"_LabelRisk", 70, 48,  3,      "Risk:", "Arial", FNT);
+   // EditCreate(     pref+"_EditCmnt",  64, 86, 58,  18, CORNER, "");
+   // EditCreate(     pref+"_EditRisk",  64, 66, 58,  18, CORNER, DoubleToString(RISK));
+   // ButtonCreate(   pref+"_TR",        104,46, 100, 20, 3, "send order", "Arial", FNT, clrBlack, C'33,218,51');
+   // ButtonCreate(   pref+"_CLS",       104,24, 100, 20, 3, "close orders", "Arial", FNT, clrBlack, clrRed);
 
    // test
-   RectLabelCreate(pref+"_RectLabel", 10,10, 150, 100, CORNER);
-   ButtonCreate(   pref+"_Test",      5, 5, 100, 20, CORNER, "TEST", "Arial", FNT, clrBlack, C'33,218,51');
+   RectLabelCreate(parent, X_OFFSET, Y_OFFSET, 108, 90, CORNER);
+   // ButtonCreate(   pref+"_Test",      5, 5, 100, 20, CORNER, "TEST", "Arial", FNT, clrBlack, C'33,218,51');
+   LabelCreate(    pref+"_LabelCmnt", 4, 6,  CORNER,      "Cmnt:", "Arial", FNT);
+   LabelCreate(    pref+"_LabelRisk", 4, 24, CORNER,      "Risk:", "Arial", FNT);
+   EditCreate(     pref+"_EditCmnt",  45, 4, 58,  18, CORNER, "");
+   EditCreate(     pref+"_EditRisk",  45, 22, 58,  18, CORNER, DoubleToString(RISK, 1));
+   ButtonCreate(   pref+"_TR",        4, 44, 100, 20, CORNER, "send order", "Arial", FNT, clrBlack, C'33,218,51');
+   ButtonCreate(   pref+"_CLS",       4, 66, 100, 20, CORNER, "close orders", "Arial", FNT, clrBlack, clrRed);
 //---
    return(INIT_SUCCEEDED);
 }
@@ -450,15 +461,15 @@ bool RectLabelCreate(const string           name="RectLabel",         // имя 
 }
 //+------------------------------------------------------------------+
 bool LabelCreate(const string            name="Label",             // имя метки 
-                 const int               x=0,                      // координата по оси X 
-                 const int               y=0,                      // координата по оси Y 
+                 int                     x=0,                      // координата по оси X 
+                 int                     y=0,                      // координата по оси Y 
                  const ENUM_BASE_CORNER  corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
                  const string            text="Label",             // текст 
                  const string            font="Arial",             // шрифт 
                  const int               font_size=10,             // размер шрифта 
                  const color             clr=clrBlack,             // цвет 
                  const double            angle=0.0,                // наклон текста 
-                 const ENUM_ANCHOR_POINT anchor=ANCHOR_RIGHT_LOWER,// способ привязки 
+                 const ENUM_ANCHOR_POINT anchor=ANCHOR_LEFT_UPPER,// способ привязки 
                  const bool              back=false,               // на заднем плане 
                  const bool              selection=false,          // выделить для перемещений 
                  const bool              hidden=true,              // скрыт в списке объектов 
@@ -473,7 +484,7 @@ bool LabelCreate(const string            name="Label",             // имя м�
             ": не удалось создать текстовую метку! Код ошибки = ",GetLastError()); 
       return(false); 
    }   
-
+   SetSubObjectPosition(parent, x, y, corner);
    ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
    ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
    ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
@@ -492,16 +503,16 @@ bool LabelCreate(const string            name="Label",             // имя м�
 }
 //+------------------------------------------------------------------+
 bool EditCreate(const string           name="Edit",              // имя объекта 
-                const int              x=0,                      // координата по оси X 
-                const int              y=0,                      // координата по оси Y 
+                int                    x=0,                      // координата по оси X 
+                int                    y=0,                      // координата по оси Y 
                 const int              width=50,                 // ширина 
                 const int              height=18,                // высота 
+                const ENUM_BASE_CORNER corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
                 const string           text="Text",              // текст 
                 const string           font="Arial",             // шрифт 
                 const int              font_size=10,             // размер шрифта 
                 const ENUM_ALIGN_MODE  align=ALIGN_RIGHT,        // способ выравнивания 
-                const bool             read_only=false,          // возможность редактировать 
-                const ENUM_BASE_CORNER corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
+                const bool             read_only=false,          // возможность редактировать                 
                 const color            clr=clrBlack,             // цвет текста 
                 const color            back_clr=clrWhite,        // цвет фона 
                 const color            border_clr=clrNONE,       // цвет границы 
@@ -522,6 +533,7 @@ bool EditCreate(const string           name="Edit",              // имя об�
             ": не удалось создать объект \"Поле ввода\"! Код ошибки = ",GetLastError()); 
       return(false); 
      }
+   SetSubObjectPosition(parent, x, y, corner);
    ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
    ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
    ObjectSetInteger(chart_ID,name,OBJPROP_XSIZE,width); 
@@ -544,8 +556,8 @@ bool EditCreate(const string           name="Edit",              // имя об�
   }
   //+------------------------------------------------------------------+
 bool ButtonCreate(const string            name="Button",            // имя кнопки 
-                  const int               x=0,                      // координата по оси X 
-                  const int               y=0,                      // координата по оси Y 
+                  int                     x=0,                      // координата по оси X 
+                  int                     y=0,                      // координата по оси Y 
                   const int               width=50,                 // ширина кнопки 
                   const int               height=18,                // высота кнопки 
                   const ENUM_BASE_CORNER  corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
@@ -574,7 +586,7 @@ bool ButtonCreate(const string            name="Button",            // имя к
       return(false); 
      }   
 
-   // SetSubObjectPosition()
+   SetSubObjectPosition(parent, x, y, corner);
 
    ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
    ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
@@ -629,18 +641,27 @@ void SetCorner(int& x, int& y, const int w, const int h, const ENUM_BASE_CORNER 
 // w,h - width, height
 // corner - точка привязки от гнариц родительского объекта
 // +--------------------------------------------------------------------------+
-void SetSubObjectPosition(const string parent, int& x, int& y, const int w, const int h, const ENUM_BASE_CORNER corner){
+void SetSubObjectPosition(const string name, int& x, int& y, const ENUM_BASE_CORNER corner){
    
-   long p_x = ObjectGetInteger(ChartID(), parent, OBJPROP_XDISTANCE);
-   long p_y = ObjectGetInteger(ChartID(), parent, OBJPROP_YDISTANCE);
-   long p_w = ObjectGetInteger(ChartID(), parent, OBJPROP_XSIZE);
-   long p_h = ObjectGetInteger(ChartID(), parent, OBJPROP_YSIZE);
-
+   int p_x = (int)ObjectGetInteger(ChartID(), name, OBJPROP_XDISTANCE);
+   int p_y = (int)ObjectGetInteger(ChartID(), name, OBJPROP_YDISTANCE);
+   
    switch(corner){
       case CORNER_LEFT_UPPER:
-      
+         x = p_x + x;
+         y = p_y + y;
+         break;
       case CORNER_RIGHT_UPPER:
-         
-      break;
+         x = p_x - x;
+         y = p_y + y;
+         break;
+      case CORNER_LEFT_LOWER:
+         x = p_x + x;
+         y = p_y - y;
+         break;
+      case CORNER_RIGHT_LOWER:
+         x = p_x - x;
+         y = p_y - y;
+         break;
    }
 }
