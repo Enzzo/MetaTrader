@@ -48,15 +48,16 @@
 
 CTrade trade;
 
-input int         MAGIC       = 111087;   //magic
-input int         SLIPPAGE    = 5;        //slippage
-input string      COMMENT     = "";       //comment
-input int         FNT         = 7;        //font
-input string      HK_TP       = "T";      //hotkey for TP
-input string      HK_SL       = "S";      //hotkey for SL
-input string      HK_PR       = "P";      //hotkey for PRICE
-input double      RISK        = 1;        //risk
-input double      COMISSION   = 7;        //comission
+input int         MAGIC       = 111087;            // magic
+input string      COMMENT     = "";                // comment
+input ENUM_BASE_CORNER CORNER = CORNER_RIGHT_LOWER;// base corner
+input int         FNT         = 7;                 // font
+input string      HK_TP       = "T";               // hotkey for TP
+input string      HK_SL       = "S";               // hotkey for SL
+input string      HK_PR       = "P";               // hotkey for PRICE
+input int         SLIPPAGE    = 5;                 // slippage
+input double      RISK        = 1;                 // risk
+input double      COMISSION   = 7;                 // comission
 
 string pref = "LBR";
 
@@ -399,10 +400,10 @@ bool RectLabelCreate(const string           name="RectLabel",         // имя 
                      const int              y=0,                      // координата по оси Y 
                      const int              width=50,                 // ширина 
                      const int              height=18,                // высота 
-                     const color            back_clr=C'87,173,202',   // цвет фона 
+                     const color            back_clr=C'87,173,202', // цвет фона 
                      const ENUM_BORDER_TYPE border=BORDER_SUNKEN,     // тип границы 
                      const ENUM_BASE_CORNER corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
-                     const color            clr=clrGray,              // цвет плоской границы (Flat) 
+                     const color            clr=clrGray,            // цвет плоской границы (Flat) 
                      const ENUM_LINE_STYLE  style=STYLE_SOLID,        // стиль плоской границы 
                      const int              line_width=1,             // толщина плоской границы 
                      const bool             back=false,               // на заднем плане 
@@ -416,6 +417,7 @@ bool RectLabelCreate(const string           name="RectLabel",         // имя 
 //--- создадим прямоугольную метку 
    const long chart_ID = 0;
    const int sub_window = 0;
+
    if(!ObjectCreate(chart_ID,name,OBJ_RECTANGLE_LABEL,sub_window,0,0)){ 
       Print(__FUNCTION__, 
             ": не удалось создать прямоугольную метку! Код ошибки = ",GetLastError()); 
@@ -580,4 +582,15 @@ bool ButtonCreate(const string            name="Button",            // имя к
    ObjectSetInteger(chart_ID,name,OBJPROP_HIDDEN,hidden);
    ObjectSetInteger(chart_ID,name,OBJPROP_ZORDER,z_order);
    return(true); 
+}
+
+void SetCorner(int& x, int& y, int w, int h, ENUM_BASE_CORNER corner){
+   switch(corner){
+      case CORNER_RIGHT_UPPER:
+      break;
+      case CORNER_LEFT_LOWER:
+      break;
+      case CORNER_RIGHT_LOWER:
+      break;      
+   }
 }
