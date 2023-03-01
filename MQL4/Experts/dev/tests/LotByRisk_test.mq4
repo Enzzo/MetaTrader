@@ -50,7 +50,7 @@ CTrade trade;
 
 input int         MAGIC       = 111087;            // magic
 input string      COMMENT     = "";                // comment
-input ENUM_BASE_CORNER CORNER = CORNER_RIGHT_LOWER;// base corner
+input ENUM_BASE_CORNER CORNER = CORNER_LEFT_UPPER;// base corner
 input int         FNT         = 7;                 // font
 input string      HK_TP       = "T";               // hotkey for TP
 input string      HK_SL       = "S";               // hotkey for SL
@@ -76,13 +76,17 @@ int OnInit(){
    if(Digits() == 5 || Digits() == 3)mtp = 10;
    Comment("");
    ObjectsDelete();
-   RectLabelCreate(pref+"_RectLabel", 108,88, 106, 90);
+   // RectLabelCreate(pref+"_RectLabel", 108,88, 106, 90, CORNER);   
    LabelCreate(    pref+"_LabelCmnt", 70, 68,  3,      "Cmnt:", "Arial", FNT);
    LabelCreate(    pref+"_LabelRisk", 70, 48,  3,      "Risk:", "Arial", FNT);
    EditCreate(     pref+"_EditCmnt",  64, 86, 58,  18, "");
    EditCreate(     pref+"_EditRisk",  64, 66, 58,  18, DoubleToString(RISK));
    ButtonCreate(   pref+"_TR",        104,46, 100, 20, 3, "send order", "Arial", FNT, clrBlack, C'33,218,51');
    ButtonCreate(   pref+"_CLS",       104,24, 100, 20, 3, "close orders", "Arial", FNT, clrBlack, clrRed);
+
+   // test
+   RectLabelCreate(pref+"_RectLabel", 10,10, 150, 100, CORNER);
+   ButtonCreate(   pref+"_Test",      5, 5, 100, 20, CORNER, "TEST", "Arial", FNT, clrBlack, C'33,218,51');
 //---
    return(INIT_SUCCEEDED);
 }
@@ -399,10 +403,10 @@ bool RectLabelCreate(const string           name="RectLabel",         // имя 
                      const int              x=0,                      // координата по оси X 
                      const int              y=0,                      // координата по оси Y 
                      const int              width=50,                 // ширина 
-                     const int              height=18,                // высота 
-                     const color            back_clr=C'87,173,202', // цвет фона 
-                     const ENUM_BORDER_TYPE border=BORDER_SUNKEN,     // тип границы 
+                     const int              height=18,                // высота
                      const ENUM_BASE_CORNER corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
+                     const color            back_clr=C'87,173,202',   // цвет фона                   
+                     const ENUM_BORDER_TYPE border=BORDER_SUNKEN,     // тип границы                      
                      const color            clr=clrGray,            // цвет плоской границы (Flat) 
                      const ENUM_LINE_STYLE  style=STYLE_SOLID,        // стиль плоской границы 
                      const int              line_width=1,             // толщина плоской границы 
@@ -417,16 +421,20 @@ bool RectLabelCreate(const string           name="RectLabel",         // имя 
 //--- создадим прямоугольную метку 
    const long chart_ID = 0;
    const int sub_window = 0;
-
+   
    if(!ObjectCreate(chart_ID,name,OBJ_RECTANGLE_LABEL,sub_window,0,0)){ 
       Print(__FUNCTION__, 
             ": не удалось создать прямоугольную метку! Код ошибки = ",GetLastError()); 
       return(false); 
      }
-   ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x);
-   ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
-   ObjectSetInteger(chart_ID,name,OBJPROP_XSIZE,width);
-   ObjectSetInteger(chart_ID,name,OBJPROP_YSIZE,height);
+   int x_ = x; int w_ = width;
+   int y_ = y; int h_ = height;   
+   
+   SetCorner(x_, y_, w_, h_, corner);
+   ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x_);
+   ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y_);
+   ObjectSetInteger(chart_ID,name,OBJPROP_XSIZE,w_);
+   ObjectSetInteger(chart_ID,name,OBJPROP_YSIZE,h_);
    ObjectSetInteger(chart_ID,name,OBJPROP_BGCOLOR,back_clr);
    ObjectSetInteger(chart_ID,name,OBJPROP_BORDER_TYPE,border);
    ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
@@ -464,7 +472,8 @@ bool LabelCreate(const string            name="Label",             // имя м�
       Print(__FUNCTION__, 
             ": не удалось создать текстовую метку! Код ошибки = ",GetLastError()); 
       return(false); 
-   }
+   }   
+
    ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
    ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
    ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
@@ -563,7 +572,10 @@ bool ButtonCreate(const string            name="Button",            // имя к
       Print(__FUNCTION__, 
             ": не удалось создать кнопку! Код ошибки = ",GetLastError()); 
       return(false); 
-     }
+     }   
+
+   // SetSubObjectPosition()
+
    ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
    ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
    ObjectSetInteger(chart_ID,name,OBJPROP_XSIZE,width); 
@@ -584,13 +596,51 @@ bool ButtonCreate(const string            name="Button",            // имя к
    return(true); 
 }
 
-void SetCorner(int& x, int& y, int w, int h, ENUM_BASE_CORNER corner){
+// +--------------------------------------------------------------------------+
+// SetCorner
+// Устанавливает координаты положения графического объекта, ориентируясь на 
+// угол привязки
+// x,y - coordinates 
+// w,h - width, height
+// corner - base_corner
+// +--------------------------------------------------------------------------+
+void SetCorner(int& x, int& y, const int w, const int h, const ENUM_BASE_CORNER corner){
    switch(corner){
       case CORNER_RIGHT_UPPER:
+         x += w;
       break;
       case CORNER_LEFT_LOWER:
+         y += h;
       break;
       case CORNER_RIGHT_LOWER:
+         x += w;
+         y += h;
       break;      
+   }
+}
+
+// +--------------------------------------------------------------------------+
+// SetSubObjectPosition
+// Устанавливает координаты положения графического объекта, ориентируясь на 
+// родительский объект и угол привязки
+// parent - имя родительского объекта, относительно которого будет строиться 
+// этот объект
+// x,y - coordinates 
+// w,h - width, height
+// corner - точка привязки от гнариц родительского объекта
+// +--------------------------------------------------------------------------+
+void SetSubObjectPosition(const string parent, int& x, int& y, const int w, const int h, const ENUM_BASE_CORNER corner){
+   
+   long p_x = ObjectGetInteger(ChartID(), parent, OBJPROP_XDISTANCE);
+   long p_y = ObjectGetInteger(ChartID(), parent, OBJPROP_YDISTANCE);
+   long p_w = ObjectGetInteger(ChartID(), parent, OBJPROP_XSIZE);
+   long p_h = ObjectGetInteger(ChartID(), parent, OBJPROP_YSIZE);
+
+   switch(corner){
+      case CORNER_LEFT_UPPER:
+      
+      case CORNER_RIGHT_UPPER:
+         
+      break;
    }
 }
