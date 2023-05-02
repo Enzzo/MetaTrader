@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
 //|                                              Sample DLL for MQL4 |
-//|                             Copyright 2000-2021, MetaQuotes Ltd. |
+//|                             Copyright 2000-2023, MetaQuotes Ltd. |
 //|                                               www.metaquotes.net |
 //+------------------------------------------------------------------+
 #include <windows.h>

@@ -595,7 +595,7 @@ bool CiMACD::Initialize(const string symbol,const ENUM_TIMEFRAMES period,
 //+------------------------------------------------------------------+
 double CiMACD::GetData(const int buffer_num,const int index) const
   {
-   return(iMACD(m_symbol,m_period,m_fast_ema_period,m_slow_ema_period,m_signal_period,buffer_num,m_applied,index));
+   return(iMACD(m_symbol,m_period,m_fast_ema_period,m_slow_ema_period,m_signal_period,m_applied,buffer_num,index));
   }
 //+------------------------------------------------------------------+
 //| Access to Main buffer of "Moving Averages                        |

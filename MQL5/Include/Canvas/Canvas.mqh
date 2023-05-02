@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                       Canvas.mqh |
-//|                   Copyright 2009-2017, MetaQuotes Software Corp. |
-//|                                              http://www.mql5.com |
+//|                             Copyright 2000-2023, MetaQuotes Ltd. |
+//|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 #include <Files\FileBin.mqh>
 #include <Controls\Rect.mqh>
@@ -2100,11 +2100,11 @@ void CCanvas::PixelSetAA(const double x,const double y,const uint clr)
    if(dx>0.0)
       xx[1]=xx[3]=ix+1;
    if(dy<0.0)
-      yy[2]=yy[2]=iy-1;
+      yy[2]=yy[3]=iy-1;
    if(dy==0.0)
-      yy[2]=yy[2]=iy;
+      yy[2]=yy[3]=iy;
    if(dy>0.0)
-      yy[2]=yy[2]=iy+1;
+      yy[2]=yy[3]=iy+1;
 //--- calculate radii and sum of their squares
    for(int i=0; i<4; i++)
      {
