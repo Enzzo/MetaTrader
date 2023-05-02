@@ -4,7 +4,6 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${vcpkgRoot}/x86-windows/include",
                 "D:/dev/git/metatrader/MQL4/Include"
             ],
             "defines": [
