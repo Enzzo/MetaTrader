@@ -1,10 +1,10 @@
 //+------------------------------------------------------------------+
 //|                                                  MACD Sample.mq5 |
-//|                   Copyright 2009-2017, MetaQuotes Software Corp. |
-//|                                              http://www.mql5.com |
+//|                             Copyright 2000-2023, MetaQuotes Ltd. |
+//|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
-#property copyright   "Copyright 2009-2017, MetaQuotes Software Corp."
-#property link        "http://www.mql5.com"
+#property copyright   "Copyright 2000-2023, MetaQuotes Ltd."
+#property link        "https://www.mql5.com"
 #property version     "5.50"
 #property description "It is important to make sure that the expert works with a normal"
 #property description "chart and the user did not make any mistakes setting input"

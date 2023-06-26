@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                 optimization.mqh |
 //|            Copyright 2003-2012 Sergey Bochkanov (ALGLIB project) |
-//|                   Copyright 2012-2017, MetaQuotes Software Corp. |
+//|                             Copyright 2000-2023, MetaQuotes Ltd. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 //| Implementation of ALGLIB library in MetaQuotes Language 5        |
@@ -2786,7 +2786,7 @@ CMinBLEIC::~CMinBLEIC(void)
 //| optimizer. We strongly recommend you to read examples in the     |
 //| ALGLIB Reference Manual and to read ALGLIB User Guide on         |
 //| optimization, which is available at                              |
-//| http://www.alglib.net/optimization/                              |
+//| https://www.alglib.net/optimization/                             |
 //| 1. User initializes algorithm state with MinBLEICCreate() call   |
 //| 2. USer adds boundary and/or linear constraints by calling       |
 //|    MinBLEICSetBC() and MinBLEICSetLC() functions.                |

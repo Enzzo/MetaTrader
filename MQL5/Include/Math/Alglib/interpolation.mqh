@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                interpolation.mqh |
 //|            Copyright 2003-2012 Sergey Bochkanov (ALGLIB project) |
-//|                   Copyright 2012-2017, MetaQuotes Software Corp. |
+//|                             Copyright 2000-2023, MetaQuotes Ltd. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 //| Implementation of ALGLIB library in MetaQuotes Language 5        |
@@ -6659,7 +6659,7 @@ static void CLSFit::PolynomialFit(double &x[],double &y[],const int n,
 //| splines:                                                         |
 //| * even simple constraints can be inconsistent, see Wikipedia     |
 //|   article on this subject:                                       |
-//|   http://en.wikipedia.org/wiki/Birkhoff_interpolation            |
+//|   https://en.wikipedia.org/wiki/Birkhoff_interpolation           |
 //| * the greater is M (given fixed constraints), the more chances   |
 //|   that constraints will be consistent                            |
 //| * in the general case, consistency of constraints is NOT         |

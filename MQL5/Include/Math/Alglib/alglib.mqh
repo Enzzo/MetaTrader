@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                       alglib.mqh |
 //|            Copyright 2003-2012 Sergey Bochkanov (ALGLIB project) |
-//|                   Copyright 2012-2017, MetaQuotes Software Corp. |
+//|                             Copyright 2000-2023, MetaQuotes Ltd. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 //| Implementation of ALGLIB library in MetaQuotes Language 5        |
@@ -3243,7 +3243,7 @@ static int CAlglib::MNLClsError(CLogitModelShell &lm,CMatrixDouble &xy,
 //| Here we give very brief outline of the MCPD. We strongly         |
 //| recommend you to read examples in the ALGLIB Reference Manual    |
 //| and to read ALGLIB User Guide on data analysis which is          |
-//| available at http://www.alglib.net/dataanalysis/                 |
+//| available at https://www.alglib.net/dataanalysis/                |
 //| 1. User initializes algorithm state with MCPDCreate() call       |
 //| 2. User adds one or more tracks -  sequences of states which     |
 //|    describe evolution of a system being modelled from different  |
@@ -3310,7 +3310,7 @@ static void CAlglib::MCPDCreate(const int n,CMCPDStateShell &s)
 //|   (hence system can not transit INTO entry state - it can only   |
 //|   transit FROM it).                                              |
 //| This model is discussed in more details in the ALGLIB User Guide |
-//| (see http://www.alglib.net/dataanalysis/ for more data).         |
+//| (see https://www.alglib.net/dataanalysis/ for more data).        |
 //| INPUT PARAMETERS:                                                |
 //|     N       -   problem dimension, N>=2                          |
 //|     EntryState- index of entry state, in 0..N-1                  |
@@ -3357,7 +3357,7 @@ static void CAlglib::MCPDCreateEntry(const int n,const int entrystate,
 //| * you want to model transitions of individuals from one state    |
 //|   into another (including transitions into the "exit" state)     |
 //| This model is discussed in more details in the ALGLIB User Guide |
-//| (see http://www.alglib.net/dataanalysis/ for more data).         |
+//| (see https://www.alglib.net/dataanalysis/ for more data).        |
 //| INPUT PARAMETERS:                                                |
 //|     N       -   problem dimension, N>=2                          |
 //|     ExitState-  index of exit state, in 0..N-1                   |
@@ -3418,7 +3418,7 @@ static void CAlglib::MCPDCreateExit(const int n,const int exitstate,
 //|   (hence system can not transit INTO entry state - it can only   |
 //|   transit FROM it).                                              |
 //| This model is discussed  in  more  details  in  the ALGLIB User  |
-//| Guide (see http://www.alglib.net/dataanalysis/ for more data).   |
+//| Guide (see https://www.alglib.net/dataanalysis/ for more data).  |
 //| INPUT PARAMETERS:                                                |
 //|     N       -   problem dimension, N>=2                          |
 //|     EntryState- index of entry state, in 0..N-1                  |
@@ -8496,7 +8496,7 @@ static void CAlglib::PolynomialFit(double &x[],double &y[],const int m,
 //| splines:                                                         |
 //| * even simple constraints can be inconsistent, see Wikipedia     |
 //|   article on this subject:                                       |
-//|   http://en.wikipedia.org/wiki/Birkhoff_interpolation            |
+//|   https://en.wikipedia.org/wiki/Birkhoff_interpolation           |
 //| * the greater is M (given fixed constraints), the more chances   |
 //|   that constraints will be consistent                            |
 //| * in the general case, consistency of constraints is NOT         |
@@ -8586,7 +8586,7 @@ static void CAlglib::PolynomialFitWC(double &x[],double &y[],double &w[],
 //| splines:                                                         |
 //| * even simple constraints can be inconsistent, see Wikipedia     |
 //|   article on this subject:                                       |
-//|   http://en.wikipedia.org/wiki/Birkhoff_interpolation            |
+//|   https://en.wikipedia.org/wiki/Birkhoff_interpolation           |
 //| * the greater is M (given fixed constraints), the more chances   |
 //|   that constraints will be consistent                            |
 //| * in the general case, consistency of constraints is NOT         |
@@ -16371,7 +16371,7 @@ static void CAlglib::MinCGRestartFrom(CMinCGStateShell &state,double &x[])
 //| optimizer. We strongly recommend you to read examples in the     |
 //| ALGLIB Reference Manual and to read ALGLIB User Guide on         |
 //| optimization, which is available at                              |
-//| http://www.alglib.net/optimization/                              |
+//| https://www.alglib.net/optimization/                             |
 //| 1. User initializes algorithm state with MinBLEICCreate() call   |
 //| 2. USer adds boundary and/or linear constraints by calling       |
 //|    MinBLEICSetBC() and MinBLEICSetLC() functions.                |
@@ -16438,7 +16438,7 @@ static void CAlglib::MinBLEICCreate(const int n,double &x[],CMinBLEICStateShell 
 //| optimizer. We strongly recommend you to read examples in the     |
 //| ALGLIB Reference Manual and to read ALGLIB User Guide on         |
 //| optimization, which is available at                              |
-//| http://www.alglib.net/optimization/                              |
+//| https://www.alglib.net/optimization/                             |
 //| 1. User initializes algorithm state with MinBLEICCreate() call   |
 //| 2. USer adds boundary and/or linear constraints by calling       |
 //|    MinBLEICSetBC() and MinBLEICSetLC() functions.                |

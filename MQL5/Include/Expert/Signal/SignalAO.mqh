@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                     SignalAO.mqh |
-//|                   Copyright 2009-2013, MetaQuotes Software Corp. |
-//|                                              http://www.mql5.com |
+//|                             Copyright 2000-2023, MetaQuotes Ltd. |
+//|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 #include <Expert\ExpertSignal.mqh>
 // wizard description start

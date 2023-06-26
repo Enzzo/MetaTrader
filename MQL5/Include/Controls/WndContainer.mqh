@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                 WndContainer.mqh |
-//|                   Copyright 2009-2017, MetaQuotes Software Corp. |
-//|                                              http://www.mql5.com |
+//|                             Copyright 2000-2023, MetaQuotes Ltd. |
+//|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 #include "Wnd.mqh"
 #include <Arrays\ArrayObj.mqh>

@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                 dataanalysis.mqh |
 //|            Copyright 2003-2012 Sergey Bochkanov (ALGLIB project) |
-//|                   Copyright 2012-2017, MetaQuotes Software Corp. |
+//|                             Copyright 2000-2023, MetaQuotes Ltd. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 //| Implementation of ALGLIB library in MetaQuotes Language 5        |
@@ -11314,7 +11314,7 @@ CMarkovCPD::~CMarkovCPD(void)
 //| Here we give very brief outline of the MCPD. We strongly         |
 //| recommend you to read examples in the ALGLIB Reference Manual    |
 //| and to read ALGLIB User Guide on data analysis which is          |
-//| available at http://www.alglib.net/dataanalysis/                 |
+//| available at https://www.alglib.net/dataanalysis/                |
 //| 1. User initializes algorithm state with MCPDCreate() call       |
 //| 2. User adds one or more tracks -  sequences of states which     |
 //|    describe evolution of a system being modelled from different  |
@@ -11382,7 +11382,7 @@ static void CMarkovCPD::MCPDCreate(const int n,CMCPDState &s)
 //|   (hence system can not transit INTO entry state - it can only   |
 //|   transit FROM it).                                              |
 //| This model is discussed in more details in the ALGLIB User Guide |
-//| (see http://www.alglib.net/dataanalysis/ for more data).         |
+//| (see https://www.alglib.net/dataanalysis/ for more data).        |
 //| INPUT PARAMETERS:                                                |
 //|     N       -   problem dimension, N>=2                          |
 //|     EntryState- index of entry state, in 0..N-1                  |
@@ -11436,7 +11436,7 @@ static void CMarkovCPD::MCPDCreateEntry(const int n,const int entrystate,
 //| * you want to model transitions of individuals from one state    |
 //|   into another (including transitions into the "exit" state)     |
 //| This model is discussed in more details in the ALGLIB User Guide |
-//| (see http://www.alglib.net/dataanalysis/ for more data).         |
+//| (see https://www.alglib.net/dataanalysis/ for more data).        |
 //| INPUT PARAMETERS:                                                |
 //|     N       -   problem dimension, N>=2                          |
 //|     ExitState-  index of exit state, in 0..N-1                   |
@@ -11504,7 +11504,7 @@ static void CMarkovCPD::MCPDCreateExit(const int n,const int exitstate,
 //|   (hence system can not transit INTO entry state - it can only   |
 //|   transit FROM it).                                              |
 //| This model is discussed  in  more  details  in  the ALGLIB User  |
-//| Guide (see http://www.alglib.net/dataanalysis/ for more data).   |
+//| Guide (see https://www.alglib.net/dataanalysis/ for more data).  |
 //| INPUT PARAMETERS:                                                |
 //|     N       -   problem dimension, N>=2                          |
 //|     EntryState- index of entry state, in 0..N-1                  |

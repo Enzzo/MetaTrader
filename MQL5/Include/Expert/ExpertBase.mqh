@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                   ExpertBase.mqh |
-//|                   Copyright 2009-2017, MetaQuotes Software Corp. |
-//|                                              http://www.mql5.com |
+//|                             Copyright 2000-2023, MetaQuotes Ltd. |
+//|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 #include <Trade\SymbolInfo.mqh>
 #include <Trade\AccountInfo.mqh>
