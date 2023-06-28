@@ -4,11 +4,18 @@
 #property description "Панель меняет свою прозрачность при перемещении"
 
 #include <Controls\Dialog.mqh>
+#include <Controls\Button.mqh>
 
 #define XRGB(r, g, b)   (0xFF000000 | uchar(r)<<16 | (uchar(g)<<8) | uchar(b))
 #define GETRGB(clr)     ((clr) & 0xFFFFFFFF)
 
-class CLivePanel : public CAppDialog{
+#define INDENT_LEFT         (11)
+#define INDENT_TOP          (11)
+#define CONTROLS_GAP_X      (5)
+#define BUTTON_WIDTH        (100)
+#define BUTTON_HEIGHT       (20)
+
+class CLivePanelAndButton : public CAppDialog{
 public:
     CLivePanel(){};
     ~CLivePanel(){};
@@ -95,6 +102,5 @@ bool CLivePanel::OnDialogDragEnd(){
             ChartRedraw();
         }
     }
-
     return (CDialog::OnDialogDragEnd());
 }
