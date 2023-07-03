@@ -5,13 +5,20 @@
 
 class lot_by_risk : public CAppDialog{
 private:
-    string prefix_;
+    string prefix_, comment_text_, risk_text_;
+    int font_;
     CLabel lb_cmnt_, lb_risk_;
     CEdit ed_cmnt_, ed_risk_;
     CButton bt_trade_, bt_close_;
 
 public:
-    bool Create(const long chart, const string name, const int subwin, const int x, const int y, const int w, const int h, const ENUM_BASE_CORNER corner);
+    lot_by_risk(){};
+   ~lot_by_risk(){};
+
+    void SetCommentDefault(const string comment){comment_text_ = comment;};
+    void SetRiskDefault(const string risk){risk_text_ = risk;};
+
+    bool Create(const long chart, const string name, const int subwin, const int x, const int y, const int w, const int h, const ENUM_BASE_CORNER corner, const int font);
 
 protected:
     bool LabelCmntCreate();
@@ -22,7 +29,7 @@ protected:
     bool ButtonCloseCreate();
 };
 
-bool lot_by_risk::Create(const long chart, const string name, const int subwin, const int x, const int y, const int w, const int h, const ENUM_BASE_CORNER corner){
+bool lot_by_risk::Create(const long chart, const string name, const int subwin, const int x, const int y, const int w, const int h, const ENUM_BASE_CORNER corner, const int font){
 
     int x1 = x;
     int y1 = y;
@@ -53,6 +60,7 @@ bool lot_by_risk::Create(const long chart, const string name, const int subwin, 
     }
 
     prefix_ = Name();
+    font_ = font;
 
     if(!LabelCmntCreate())      return false;
     if(!LabelRiskCreate())      return false;
@@ -66,6 +74,7 @@ bool lot_by_risk::Create(const long chart, const string name, const int subwin, 
 
 bool lot_by_risk::LabelCmntCreate(){
     if(!lb_cmnt_.Create(0, prefix_ + "label_cmnt", 0, 4, 2, 1, 1)) return (false);
+    if(!lb_cmnt_.FontSize(font_)) return (false);
     if(!lb_cmnt_.Text("Comment:")) return (false);
     if(!Add(lb_cmnt_)) return (false);
     return (true);
@@ -73,27 +82,40 @@ bool lot_by_risk::LabelCmntCreate(){
 
 bool lot_by_risk::LabelRiskCreate(){
     if(!lb_risk_.Create(0, prefix_ + "label_risk", 0, 4, 20, 1, 1)) return (false);
+    if(!lb_risk_.FontSize(font_)) return (false);
     if(!lb_risk_.Text("Risk:")) return (false);
     if(!Add(lb_risk_)) return (false);
     return (true);
 }
 
 bool lot_by_risk::EditCmntCreate(){
-    if(!ed_cmnt_.Create(0, prefix_ + "edit_cmnt", 0, 50, 2, 98, 18)) return (false);
+    if(!ed_cmnt_.Create(0, prefix_ + "edit_cmnt", 0, 50, 4, 98, 20)) return (false);
+    if(!ed_cmnt_.FontSize(font_)) return (false);
+    if(!ed_cmnt_.Text(risk_text_)) return (false);
     if(!Add(ed_cmnt_)) return (false);
     return (true);
 }
 
 bool lot_by_risk::EditRiskCreate(){
     if(!ed_risk_.Create(0, prefix_ + "edit_risk", 0, 50, 22, 98, 40)) return (false);
+    if(!ed_risk_.FontSize(font_)) return (false);
+    if(!ed_risk_.Text(comment_text_)) return (false);
     if(!Add(ed_risk_)) return (false);
     return (true);
 }
 
 bool lot_by_risk::ButtonOpenCreate(){
-    return true;
+    if(!bt_trade_.Create(0, prefix_ + "button_trade", 0, 4, 42, 98, 58)) return (false);
+    if(!bt_trade_.FontSize(font_)) return (false);
+    if(!bt_trade_.Text("Trade")) return (false);
+    if(!Add(bt_trade_)) return (false);
+    return (true);
 }
 
 bool lot_by_risk::ButtonCloseCreate(){
-    return true;
+    if(!bt_close_.Create(0, prefix_ + "button_close", 0, 4, 60, 98, 76)) return (false);
+    if(!bt_close_.FontSize(font_)) return (false);
+    if(!bt_close_.Text("Close")) return (false);
+    if(!Add(bt_close_)) return (false);
+    return (true);
 }
