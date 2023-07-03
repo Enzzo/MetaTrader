@@ -23,8 +23,7 @@ protected:
 };
 
 bool lot_by_risk::Create(const long chart, const string name, const int subwin, const int x, const int y, const int w, const int h, const ENUM_BASE_CORNER corner){
-    prefix_ = Name();
-    
+
     int x1 = x;
     int y1 = y;
     int x2 = x + w;
@@ -53,6 +52,8 @@ bool lot_by_risk::Create(const long chart, const string name, const int subwin, 
         return (false);
     }
 
+    prefix_ = Name();
+    
     if(!LabelRiskCreate())      return false;
     if(!EditCmntCreate())       return false;
     if(!EditRiskCreate())       return false;
