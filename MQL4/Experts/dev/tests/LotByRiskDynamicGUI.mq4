@@ -71,6 +71,9 @@ input int         SLIPPAGE    = 5;                 // slippage
 input double      RISK        = 1.0;               // risk
 input double      COMISSION   = 0.0;               // comission
 
+#define PANEL_WIDTH  300
+#define PANEL_HEIGHT 200
+
 string pref = "LBR";
 
 string t_line = pref + "_t_line";
@@ -81,7 +84,7 @@ string parent = pref+"_RectLabel";
 int mtp = 1;
 
 int OnInit(){
-   if(!panel.Create(0, "Lot By Risk", 0, X_OFFSET, Y_OFFSET, 108, 90, CORNER)){
+   if(!panel.Create(0, "Lot By Risk", 0, X_OFFSET, Y_OFFSET, PANEL_WIDTH, PANEL_HEIGHT, CORNER)){
       return (INIT_FAILED);
    }
    panel.Run();

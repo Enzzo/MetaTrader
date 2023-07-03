@@ -46,8 +46,6 @@
 
 #include <custom/Trade.mqh>
 
-#define PARENT = 
-
 CTrade trade;
 
 input int         MAGIC       = 111087;            // magic
