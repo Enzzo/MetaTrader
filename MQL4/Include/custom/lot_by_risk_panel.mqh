@@ -53,34 +53,41 @@ bool lot_by_risk::Create(const long chart, const string name, const int subwin, 
     }
 
     prefix_ = Name();
-    
+
+    if(!LabelCmntCreate())      return false;
     if(!LabelRiskCreate())      return false;
     if(!EditCmntCreate())       return false;
     if(!EditRiskCreate())       return false;
     if(!ButtonOpenCreate())     return false;
     if(!ButtonCloseCreate())    return false;
 
-    // string prefix = Name();
-    lb_cmnt_.Create(chart, prefix_ + "Edit", subwin, 10, 10, 30, 30);
-    lb_cmnt_.Text("test");
-    Add(lb_cmnt_);
     return (true);
 }
 
 bool lot_by_risk::LabelCmntCreate(){
-    return true;
+    if(!lb_cmnt_.Create(0, prefix_ + "label_cmnt", 0, 4, 2, 1, 1)) return (false);
+    if(!lb_cmnt_.Text("Comment:")) return (false);
+    if(!Add(lb_cmnt_)) return (false);
+    return (true);
 }
 
 bool lot_by_risk::LabelRiskCreate(){
-    return true;
+    if(!lb_risk_.Create(0, prefix_ + "label_risk", 0, 4, 20, 1, 1)) return (false);
+    if(!lb_risk_.Text("Risk:")) return (false);
+    if(!Add(lb_risk_)) return (false);
+    return (true);
 }
 
 bool lot_by_risk::EditCmntCreate(){
-    return true;
+    if(!ed_cmnt_.Create(0, prefix_ + "edit_cmnt", 0, 50, 2, 98, 18)) return (false);
+    if(!Add(ed_cmnt_)) return (false);
+    return (true);
 }
 
 bool lot_by_risk::EditRiskCreate(){
-    return true;
+    if(!ed_risk_.Create(0, prefix_ + "edit_risk", 0, 50, 22, 98, 40)) return (false);
+    if(!Add(ed_risk_)) return (false);
+    return (true);
 }
 
 bool lot_by_risk::ButtonOpenCreate(){

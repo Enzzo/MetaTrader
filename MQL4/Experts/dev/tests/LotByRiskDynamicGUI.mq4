@@ -50,20 +50,29 @@
 #property description "The first feature of the panel is convenient placing of orders using control lines."
 #property description "The second feature is the calculation of the order volume for a given risk and the presence of a stop loss line."
 
-#include <custom/lot_by_risk_panel.mqh>
+#include <Controls\Defines.mqh>
 
-#include <custom/Trade.mqh>
+#undef CONTROLS_FONT_NAME
+#undef CONTROLS_FONT_SIZE
 
-lot_by_risk panel;
+#undef CONTROLS_BUTTON_COLOR
+#undef CONTROLS_BUTTON_COLOR_BG
+#undef CONTROLS_BUTTON_COLOR_BORDER
 
-CTrade trade;
+#undef CONTROLS_DIALOG_COLOR_BORDER_LIGHT
+#undef CONTROLS_DIALOG_COLOR_BORDER_DARK
+#undef CONTROLS_DIALOG_COLOR_BG
+#undef CONTROLS_DIALOG_COLOR_CAPTION_TEXT
+#undef CONTROLS_DIALOG_COLOR_CLIENT_BG
+#undef CONTROLS_DIALOG_COLOR_CLIENT_BORDER
 
 input int         MAGIC       = 111087;            // magic
 input string      COMMENT     = "";                // comment
+input string      font_name   = "Trebuchet MS";    // 
+input int         font_size   = 7;
 input ENUM_BASE_CORNER CORNER = CORNER_LEFT_UPPER; // base corner
-input int         X_OFFSET    = 10;                // X - offset
-input int         Y_OFFSET    = 10;                // Y - offset
-input int         FNT         = 7;                 // font
+input int         X_OFFSET    = 20;                // X - offset
+input int         Y_OFFSET    = 20;                // Y - offset
 input string      HK_TP       = "T";               // hotkey for TP
 input string      HK_SL       = "S";               // hotkey for SL
 input string      HK_PR       = "P";               // hotkey for PRICE
@@ -71,8 +80,40 @@ input int         SLIPPAGE    = 5;                 // slippage
 input double      RISK        = 1.0;               // risk
 input double      COMISSION   = 0.0;               // comission
 
-#define PANEL_WIDTH  300
-#define PANEL_HEIGHT 200
+
+input color button_color               = C'0x3B,0x29,0x28';
+input color button_color_bg            = C'0xDD,0xE2,0xEB';
+input color button_color_border        = C'0xB2,0xC3,0xCF';
+input color dialog_color_border_light  = White;
+input color dialog_color_border_dart   = C'0xB6,0xB6,0xB6';
+input color dialog_color_bg            = C'0xF0,0xF0,0xF0';
+input color dialog_color_caption_text  = C'0x28,0x29,0x3B';
+input color dialog_color_client_bg     = C'0xF7,0xF7,0xF7';
+input color dialog_color_client_border = C'0xC8,0xC8,0xC8';
+
+#define CONTROLS_FONT_NAME                   font_name
+#define CONTROLS_FONT_SIZE                   font_size
+
+#define CONTROLS_BUTTON_COLOR                button_color
+#define CONTROLS_BUTTON_COLOR_BG             button_color_bg
+#define CONTROLS_BUTTON_COLOR_BORDER         button_color_border
+
+#define CONTROLS_DIALOG_COLOR_BORDER_LIGHT   dialog_color_border_light
+#define CONTROLS_DIALOG_COLOR_BORDER_DARK    dialog_color_border_dart
+#define CONTROLS_DIALOG_COLOR_BG             dialog_color_bg
+#define CONTROLS_DIALOG_COLOR_CAPTION_TEXT   dialog_color_caption_text
+#define CONTROLS_DIALOG_COLOR_CLIENT_BG      dialog_color_client_bg
+#define CONTROLS_DIALOG_COLOR_CLIENT_BORDER  dialog_color_client_border
+
+#include <custom/lot_by_risk_panel.mqh>
+#include <custom/Trade.mqh>
+
+lot_by_risk panel;
+
+CTrade trade;
+
+#define PANEL_WIDTH  110
+#define PANEL_HEIGHT 138
 
 string pref = "LBR";
 
@@ -84,7 +125,7 @@ string parent = pref+"_RectLabel";
 int mtp = 1;
 
 int OnInit(){
-   if(!panel.Create(0, "Lot By Risk", 0, X_OFFSET, Y_OFFSET, PANEL_WIDTH, PANEL_HEIGHT, CORNER)){
+   if(!panel.Create(0, "LBR", 0, X_OFFSET, Y_OFFSET, PANEL_WIDTH, PANEL_HEIGHT, CORNER)){
       return (INIT_FAILED);
    }
    panel.Run();
@@ -231,16 +272,16 @@ long StringToToken(const string& s){
 //Удаляет все объекты, используемые этим советником
 // ot = общее количество всех объектов
 // on = имя объекта
-void ObjectsDelete(){
-   int ot = ObjectsTotal();
-   string on = "";
-   if(ot > 0){
-      for(int i = ot-1; i>=0; i--){
-         on = ObjectName(ChartID(), i);
-         if(StringFind(on, pref)!= -1) ObjectDelete(ChartID(), on);
-      }
-   }
-}
+// void ObjectsDelete(){
+//    int ot = ObjectsTotal();
+//    string on = "";
+//    if(ot > 0){
+//       for(int i = ot-1; i>=0; i--){
+//          on = ObjectName(ChartID(), i);
+//          if(StringFind(on, pref)!= -1) ObjectDelete(ChartID(), on);
+//       }
+//    }
+// }
 //+------------------------------------------------------------------+
 bool Trade(){
    
@@ -421,203 +462,203 @@ bool LineMove(const string name, const double price){
    return ObjectMove(0,name,0,0,price);
 }
 //+------------------------------------------------------------------+
-bool RectLabelCreate(const string           name="RectLabel",         // имя метки
-                     const int              x=0,                      // координата по оси X 
-                     const int              y=0,                      // координата по оси Y 
-                     const int              width=50,                 // ширина 
-                     const int              height=18,                // высота
-                     const ENUM_BASE_CORNER corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
-                     const color            back_clr=C'87,173,202',   // цвет фона                   
-                     const ENUM_BORDER_TYPE border=BORDER_SUNKEN,     // тип границы                      
-                     const color            clr=clrGray,            // цвет плоской границы (Flat) 
-                     const ENUM_LINE_STYLE  style=STYLE_SOLID,        // стиль плоской границы 
-                     const int              line_width=1,             // толщина плоской границы 
-                     const bool             back=false,               // на заднем плане 
-                     const bool             selection=false,          // выделить для перемещений 
-                     const bool             hidden=true,              // скрыт в списке объектов 
-                     const long             z_order=0)                // приоритет на нажатие мышью 
-  { 
-  if(ObjectFind(ChartID(), name)!= -1)return true;
-//--- сбросим значение ошибки 
-   ResetLastError(); 
-//--- создадим прямоугольную метку 
-   const long chart_ID = 0;
-   const int sub_window = 0;
+// bool RectLabelCreate(const string           name="RectLabel",         // имя метки
+//                      const int              x=0,                      // координата по оси X 
+//                      const int              y=0,                      // координата по оси Y 
+//                      const int              width=50,                 // ширина 
+//                      const int              height=18,                // высота
+//                      const ENUM_BASE_CORNER corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
+//                      const color            back_clr=C'87,173,202',   // цвет фона                   
+//                      const ENUM_BORDER_TYPE border=BORDER_SUNKEN,     // тип границы                      
+//                      const color            clr=clrGray,            // цвет плоской границы (Flat) 
+//                      const ENUM_LINE_STYLE  style=STYLE_SOLID,        // стиль плоской границы 
+//                      const int              line_width=1,             // толщина плоской границы 
+//                      const bool             back=false,               // на заднем плане 
+//                      const bool             selection=false,          // выделить для перемещений 
+//                      const bool             hidden=true,              // скрыт в списке объектов 
+//                      const long             z_order=0)                // приоритет на нажатие мышью 
+//   { 
+//   if(ObjectFind(ChartID(), name)!= -1)return true;
+// //--- сбросим значение ошибки 
+//    ResetLastError(); 
+// //--- создадим прямоугольную метку 
+//    const long chart_ID = 0;
+//    const int sub_window = 0;
    
-   if(!ObjectCreate(chart_ID,name,OBJ_RECTANGLE_LABEL,sub_window,0,0)){ 
-      Print(__FUNCTION__, 
-            ": не удалось создать прямоугольную метку! Код ошибки = ",GetLastError()); 
-      return(false); 
-     }
-   int x_ = x; int w_ = width;
-   int y_ = y; int h_ = height;   
+//    if(!ObjectCreate(chart_ID,name,OBJ_RECTANGLE_LABEL,sub_window,0,0)){ 
+//       Print(__FUNCTION__, 
+//             ": не удалось создать прямоугольную метку! Код ошибки = ",GetLastError()); 
+//       return(false); 
+//      }
+//    int x_ = x; int w_ = width;
+//    int y_ = y; int h_ = height;   
    
-   SetCorner(x_, y_, w_, h_, corner);
-   ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x_);
-   ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y_);
-   ObjectSetInteger(chart_ID,name,OBJPROP_XSIZE,w_);
-   ObjectSetInteger(chart_ID,name,OBJPROP_YSIZE,h_);
-   ObjectSetInteger(chart_ID,name,OBJPROP_BGCOLOR,back_clr);
-   ObjectSetInteger(chart_ID,name,OBJPROP_BORDER_TYPE,border);
-   ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
-   ObjectSetInteger(chart_ID,name,OBJPROP_COLOR,clr);
-   ObjectSetInteger(chart_ID,name,OBJPROP_STYLE,style);
-   ObjectSetInteger(chart_ID,name,OBJPROP_WIDTH,line_width);
-   ObjectSetInteger(chart_ID,name,OBJPROP_BACK,back);
-   ObjectSetInteger(chart_ID,name,OBJPROP_SELECTABLE,selection);
-   ObjectSetInteger(chart_ID,name,OBJPROP_SELECTED,selection);
-   ObjectSetInteger(chart_ID,name,OBJPROP_HIDDEN,hidden);
-   ObjectSetInteger(chart_ID,name,OBJPROP_ZORDER,z_order);
-   return(true); 
-}
-//+------------------------------------------------------------------+
-bool LabelCreate(const string            name="Label",             // имя метки 
-                 int                     x=0,                      // координата по оси X 
-                 int                     y=0,                      // координата по оси Y 
-                 const ENUM_BASE_CORNER  corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
-                 const string            text="Label",             // текст 
-                 const string            font="Arial",             // шрифт 
-                 const int               font_size=10,             // размер шрифта 
-                 const color             clr=clrBlack,             // цвет 
-                 const double            angle=0.0,                // наклон текста 
-                 const ENUM_ANCHOR_POINT anchor=ANCHOR_LEFT_UPPER,// способ привязки 
-                 const bool              back=false,               // на заднем плане 
-                 const bool              selection=false,          // выделить для перемещений 
-                 const bool              hidden=true,              // скрыт в списке объектов 
-                 const long              z_order=0)                // приоритет на нажатие мышью 
-{
-   if(ObjectFind(ChartID(), name)!= -1)return true;
-   const long chart_ID = 0;
-   const int sub_window = 0;
-   ResetLastError(); 
-   if(!ObjectCreate(chart_ID,name,OBJ_LABEL,sub_window,0,0)){ 
-      Print(__FUNCTION__, 
-            ": не удалось создать текстовую метку! Код ошибки = ",GetLastError()); 
-      return(false); 
-   }   
-   SetSubObjectPosition(parent, x, y, corner);
-   ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
-   ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
-   ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
-   ObjectSetString(chart_ID,name,OBJPROP_TEXT,text);
-   ObjectSetString(chart_ID,name,OBJPROP_FONT,font);
-   ObjectSetInteger(chart_ID,name,OBJPROP_FONTSIZE,font_size);
-   ObjectSetDouble(chart_ID,name,OBJPROP_ANGLE,angle);
-   ObjectSetInteger(chart_ID,name,OBJPROP_ANCHOR,anchor);
-   ObjectSetInteger(chart_ID,name,OBJPROP_COLOR,clr);
-   ObjectSetInteger(chart_ID,name,OBJPROP_BACK,back);
-   ObjectSetInteger(chart_ID,name,OBJPROP_SELECTABLE,selection); 
-   ObjectSetInteger(chart_ID,name,OBJPROP_SELECTED,selection);
-   ObjectSetInteger(chart_ID,name,OBJPROP_HIDDEN,hidden);
-   ObjectSetInteger(chart_ID,name,OBJPROP_ZORDER,z_order);
-   return(true); 
-}
-//+------------------------------------------------------------------+
-bool EditCreate(const string           name="Edit",              // имя объекта 
-                int                    x=0,                      // координата по оси X 
-                int                    y=0,                      // координата по оси Y 
-                const int              width=50,                 // ширина 
-                const int              height=18,                // высота 
-                const ENUM_BASE_CORNER corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
-                const string           text="Text",              // текст 
-                const string           font="Arial",             // шрифт 
-                const int              font_size=10,             // размер шрифта 
-                const ENUM_ALIGN_MODE  align=ALIGN_RIGHT,        // способ выравнивания 
-                const bool             read_only=false,          // возможность редактировать                 
-                const color            clr=clrBlack,             // цвет текста 
-                const color            back_clr=clrWhite,        // цвет фона 
-                const color            border_clr=clrNONE,       // цвет границы 
-                const bool             back=false,               // на заднем плане 
-                const bool             selection=false,          // выделить для перемещений 
-                const bool             hidden=true,              // скрыт в списке объектов 
-                const long             z_order=0)                // приоритет на нажатие мышью 
-{
-   if(ObjectFind(ChartID(), name)!= -1)return true;
-   const long chart_ID = 0;
-   const int sub_window = 0;
-//--- сбросим значение ошибки 
-   ResetLastError(); 
-//--- создадим поле ввода 
-   if(!ObjectCreate(chart_ID,name,OBJ_EDIT,sub_window,0,0)) 
-     { 
-      Print(__FUNCTION__, 
-            ": не удалось создать объект \"Поле ввода\"! Код ошибки = ",GetLastError()); 
-      return(false); 
-     }
-   SetSubObjectPosition(parent, x, y, corner);
-   ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
-   ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
-   ObjectSetInteger(chart_ID,name,OBJPROP_XSIZE,width); 
-   ObjectSetInteger(chart_ID,name,OBJPROP_YSIZE,height);
-   ObjectSetString(chart_ID,name,OBJPROP_TEXT,text);
-   ObjectSetString(chart_ID,name,OBJPROP_FONT,font);
-   ObjectSetInteger(chart_ID,name,OBJPROP_FONTSIZE,font_size);
-   ObjectSetInteger(chart_ID,name,OBJPROP_ALIGN,align);
-   ObjectSetInteger(chart_ID,name,OBJPROP_READONLY,read_only);
-   ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
-   ObjectSetInteger(chart_ID,name,OBJPROP_COLOR,clr);
-   ObjectSetInteger(chart_ID,name,OBJPROP_BGCOLOR,back_clr);
-   ObjectSetInteger(chart_ID,name,OBJPROP_BORDER_COLOR,border_clr);
-   ObjectSetInteger(chart_ID,name,OBJPROP_BACK,back);
-   ObjectSetInteger(chart_ID,name,OBJPROP_SELECTABLE,selection); 
-   ObjectSetInteger(chart_ID,name,OBJPROP_SELECTED,selection);
-   ObjectSetInteger(chart_ID,name,OBJPROP_HIDDEN,hidden);
-   ObjectSetInteger(chart_ID,name,OBJPROP_ZORDER,z_order);
-   return(true); 
-  }
-  //+------------------------------------------------------------------+
-bool ButtonCreate(const string            name="Button",            // имя кнопки 
-                  int                     x=0,                      // координата по оси X 
-                  int                     y=0,                      // координата по оси Y 
-                  const int               width=50,                 // ширина кнопки 
-                  const int               height=18,                // высота кнопки 
-                  const ENUM_BASE_CORNER  corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
-                  const string            text="Button",            // текст 
-                  const string            font="Arial",             // шрифт 
-                  const int               font_size=10,             // размер шрифта 
-                  const color             clr=clrBlack,             // цвет текста 
-                  const color             back_clr=C'236,233,216',  // цвет фона 
-                  const color             border_clr=clrNONE,       // цвет границы 
-                  const bool              state=false,              // нажата/отжата 
-                  const bool              back=false,               // на заднем плане 
-                  const bool              selection=false,          // выделить для перемещений 
-                  const bool              hidden=true,              // скрыт в списке объектов 
-                  const long              z_order=0)                // приоритет на нажатие мышью 
-{
-   if(ObjectFind(ChartID(), name)!= -1)return true;
-   const long chart_ID = 0;
-   const int sub_window = 0;
-//--- сбросим значение ошибки 
-   ResetLastError(); 
-//--- создадим кнопку 
-   if(!ObjectCreate(chart_ID,name,OBJ_BUTTON,sub_window,0,0)) 
-     { 
-      Print(__FUNCTION__, 
-            ": не удалось создать кнопку! Код ошибки = ",GetLastError()); 
-      return(false); 
-     }   
+//    SetCorner(x_, y_, w_, h_, corner);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x_);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y_);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_XSIZE,w_);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_YSIZE,h_);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_BGCOLOR,back_clr);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_BORDER_TYPE,border);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_COLOR,clr);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_STYLE,style);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_WIDTH,line_width);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_BACK,back);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_SELECTABLE,selection);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_SELECTED,selection);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_HIDDEN,hidden);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_ZORDER,z_order);
+//    return(true); 
+// }
+// //+------------------------------------------------------------------+
+// bool LabelCreate(const string            name="Label",             // имя метки 
+//                  int                     x=0,                      // координата по оси X 
+//                  int                     y=0,                      // координата по оси Y 
+//                  const ENUM_BASE_CORNER  corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
+//                  const string            text="Label",             // текст 
+//                  const string            font="Arial",             // шрифт 
+//                  const int               font_size=10,             // размер шрифта 
+//                  const color             clr=clrBlack,             // цвет 
+//                  const double            angle=0.0,                // наклон текста 
+//                  const ENUM_ANCHOR_POINT anchor=ANCHOR_LEFT_UPPER,// способ привязки 
+//                  const bool              back=false,               // на заднем плане 
+//                  const bool              selection=false,          // выделить для перемещений 
+//                  const bool              hidden=true,              // скрыт в списке объектов 
+//                  const long              z_order=0)                // приоритет на нажатие мышью 
+// {
+//    if(ObjectFind(ChartID(), name)!= -1)return true;
+//    const long chart_ID = 0;
+//    const int sub_window = 0;
+//    ResetLastError(); 
+//    if(!ObjectCreate(chart_ID,name,OBJ_LABEL,sub_window,0,0)){ 
+//       Print(__FUNCTION__, 
+//             ": не удалось создать текстовую метку! Код ошибки = ",GetLastError()); 
+//       return(false); 
+//    }   
+//    SetSubObjectPosition(parent, x, y, corner);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
+//    ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
+//    ObjectSetString(chart_ID,name,OBJPROP_TEXT,text);
+//    ObjectSetString(chart_ID,name,OBJPROP_FONT,font);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_FONTSIZE,font_size);
+//    ObjectSetDouble(chart_ID,name,OBJPROP_ANGLE,angle);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_ANCHOR,anchor);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_COLOR,clr);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_BACK,back);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_SELECTABLE,selection); 
+//    ObjectSetInteger(chart_ID,name,OBJPROP_SELECTED,selection);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_HIDDEN,hidden);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_ZORDER,z_order);
+//    return(true); 
+// }
+// //+------------------------------------------------------------------+
+// bool EditCreate(const string           name="Edit",              // имя объекта 
+//                 int                    x=0,                      // координата по оси X 
+//                 int                    y=0,                      // координата по оси Y 
+//                 const int              width=50,                 // ширина 
+//                 const int              height=18,                // высота 
+//                 const ENUM_BASE_CORNER corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
+//                 const string           text="Text",              // текст 
+//                 const string           font="Arial",             // шрифт 
+//                 const int              font_size=10,             // размер шрифта 
+//                 const ENUM_ALIGN_MODE  align=ALIGN_RIGHT,        // способ выравнивания 
+//                 const bool             read_only=false,          // возможность редактировать                 
+//                 const color            clr=clrBlack,             // цвет текста 
+//                 const color            back_clr=clrWhite,        // цвет фона 
+//                 const color            border_clr=clrNONE,       // цвет границы 
+//                 const bool             back=false,               // на заднем плане 
+//                 const bool             selection=false,          // выделить для перемещений 
+//                 const bool             hidden=true,              // скрыт в списке объектов 
+//                 const long             z_order=0)                // приоритет на нажатие мышью 
+// {
+//    if(ObjectFind(ChartID(), name)!= -1)return true;
+//    const long chart_ID = 0;
+//    const int sub_window = 0;
+// //--- сбросим значение ошибки 
+//    ResetLastError(); 
+// //--- создадим поле ввода 
+//    if(!ObjectCreate(chart_ID,name,OBJ_EDIT,sub_window,0,0)) 
+//      { 
+//       Print(__FUNCTION__, 
+//             ": не удалось создать объект \"Поле ввода\"! Код ошибки = ",GetLastError()); 
+//       return(false); 
+//      }
+//    SetSubObjectPosition(parent, x, y, corner);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
+//    ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_XSIZE,width); 
+//    ObjectSetInteger(chart_ID,name,OBJPROP_YSIZE,height);
+//    ObjectSetString(chart_ID,name,OBJPROP_TEXT,text);
+//    ObjectSetString(chart_ID,name,OBJPROP_FONT,font);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_FONTSIZE,font_size);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_ALIGN,align);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_READONLY,read_only);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_COLOR,clr);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_BGCOLOR,back_clr);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_BORDER_COLOR,border_clr);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_BACK,back);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_SELECTABLE,selection); 
+//    ObjectSetInteger(chart_ID,name,OBJPROP_SELECTED,selection);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_HIDDEN,hidden);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_ZORDER,z_order);
+//    return(true); 
+//   }
+//   //+------------------------------------------------------------------+
+// bool ButtonCreate(const string            name="Button",            // имя кнопки 
+//                   int                     x=0,                      // координата по оси X 
+//                   int                     y=0,                      // координата по оси Y 
+//                   const int               width=50,                 // ширина кнопки 
+//                   const int               height=18,                // высота кнопки 
+//                   const ENUM_BASE_CORNER  corner=CORNER_RIGHT_LOWER,// угол графика для привязки 
+//                   const string            text="Button",            // текст 
+//                   const string            font="Arial",             // шрифт 
+//                   const int               font_size=10,             // размер шрифта 
+//                   const color             clr=clrBlack,             // цвет текста 
+//                   const color             back_clr=C'236,233,216',  // цвет фона 
+//                   const color             border_clr=clrNONE,       // цвет границы 
+//                   const bool              state=false,              // нажата/отжата 
+//                   const bool              back=false,               // на заднем плане 
+//                   const bool              selection=false,          // выделить для перемещений 
+//                   const bool              hidden=true,              // скрыт в списке объектов 
+//                   const long              z_order=0)                // приоритет на нажатие мышью 
+// {
+//    if(ObjectFind(ChartID(), name)!= -1)return true;
+//    const long chart_ID = 0;
+//    const int sub_window = 0;
+// //--- сбросим значение ошибки 
+//    ResetLastError(); 
+// //--- создадим кнопку 
+//    if(!ObjectCreate(chart_ID,name,OBJ_BUTTON,sub_window,0,0)) 
+//      { 
+//       Print(__FUNCTION__, 
+//             ": не удалось создать кнопку! Код ошибки = ",GetLastError()); 
+//       return(false); 
+//      }   
 
-   SetSubObjectPosition(parent, x, y, corner);
+//    SetSubObjectPosition(parent, x, y, corner);
 
-   ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
-   ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
-   ObjectSetInteger(chart_ID,name,OBJPROP_XSIZE,width); 
-   ObjectSetInteger(chart_ID,name,OBJPROP_YSIZE,height);
-   ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
-   ObjectSetString(chart_ID,name,OBJPROP_TEXT,text);
-   ObjectSetString(chart_ID,name,OBJPROP_FONT,font);
-   ObjectSetInteger(chart_ID,name,OBJPROP_FONTSIZE,font_size);
-   ObjectSetInteger(chart_ID,name,OBJPROP_COLOR,clr);
-   ObjectSetInteger(chart_ID,name,OBJPROP_BGCOLOR,back_clr);
-   ObjectSetInteger(chart_ID,name,OBJPROP_BORDER_COLOR,border_clr);
-   ObjectSetInteger(chart_ID,name,OBJPROP_BACK,back);
-   ObjectSetInteger(chart_ID,name,OBJPROP_STATE,state);
-   ObjectSetInteger(chart_ID,name,OBJPROP_SELECTABLE,selection); 
-   ObjectSetInteger(chart_ID,name,OBJPROP_SELECTED,selection);
-   ObjectSetInteger(chart_ID,name,OBJPROP_HIDDEN,hidden);
-   ObjectSetInteger(chart_ID,name,OBJPROP_ZORDER,z_order);
-   return(true); 
-}
+//    ObjectSetInteger(chart_ID,name,OBJPROP_XDISTANCE,x); 
+//    ObjectSetInteger(chart_ID,name,OBJPROP_YDISTANCE,y);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_XSIZE,width); 
+//    ObjectSetInteger(chart_ID,name,OBJPROP_YSIZE,height);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_CORNER,corner);
+//    ObjectSetString(chart_ID,name,OBJPROP_TEXT,text);
+//    ObjectSetString(chart_ID,name,OBJPROP_FONT,font);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_FONTSIZE,font_size);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_COLOR,clr);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_BGCOLOR,back_clr);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_BORDER_COLOR,border_clr);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_BACK,back);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_STATE,state);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_SELECTABLE,selection); 
+//    ObjectSetInteger(chart_ID,name,OBJPROP_SELECTED,selection);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_HIDDEN,hidden);
+//    ObjectSetInteger(chart_ID,name,OBJPROP_ZORDER,z_order);
+//    return(true); 
+// }
 
 // +--------------------------------------------------------------------------+
 // SetCorner
@@ -627,20 +668,20 @@ bool ButtonCreate(const string            name="Button",            // имя к
 // w,h - width, height
 // corner - base_corner
 // +--------------------------------------------------------------------------+
-void SetCorner(int& x, int& y, const int w, const int h, const ENUM_BASE_CORNER corner){
-   switch(corner){
-      case CORNER_RIGHT_UPPER:
-         x += w;
-      break;
-      case CORNER_LEFT_LOWER:
-         y += h;
-      break;
-      case CORNER_RIGHT_LOWER:
-         x += w;
-         y += h;
-      break;      
-   }
-}
+// void SetCorner(int& x, int& y, const int w, const int h, const ENUM_BASE_CORNER corner){
+//    switch(corner){
+//       case CORNER_RIGHT_UPPER:
+//          x += w;
+//       break;
+//       case CORNER_LEFT_LOWER:
+//          y += h;
+//       break;
+//       case CORNER_RIGHT_LOWER:
+//          x += w;
+//          y += h;
+//       break;      
+//    }
+// }
 
 // +--------------------------------------------------------------------------+
 // SetSubObjectPosition
@@ -652,27 +693,27 @@ void SetCorner(int& x, int& y, const int w, const int h, const ENUM_BASE_CORNER 
 // w,h - width, height
 // corner - точка привязки от гнариц родительского объекта
 // +--------------------------------------------------------------------------+
-void SetSubObjectPosition(const string name, int& x, int& y, const ENUM_BASE_CORNER corner){
+// void SetSubObjectPosition(const string name, int& x, int& y, const ENUM_BASE_CORNER corner){
    
-   int p_x = (int)ObjectGetInteger(ChartID(), name, OBJPROP_XDISTANCE);
-   int p_y = (int)ObjectGetInteger(ChartID(), name, OBJPROP_YDISTANCE);
+//    int p_x = (int)ObjectGetInteger(ChartID(), name, OBJPROP_XDISTANCE);
+//    int p_y = (int)ObjectGetInteger(ChartID(), name, OBJPROP_YDISTANCE);
    
-   switch(corner){
-      case CORNER_LEFT_UPPER:
-         x = p_x + x;
-         y = p_y + y;
-         break;
-      case CORNER_RIGHT_UPPER:
-         x = p_x - x;
-         y = p_y + y;
-         break;
-      case CORNER_LEFT_LOWER:
-         x = p_x + x;
-         y = p_y - y;
-         break;
-      case CORNER_RIGHT_LOWER:
-         x = p_x - x;
-         y = p_y - y;
-         break;
-   }
-}
+//    switch(corner){
+//       case CORNER_LEFT_UPPER:
+//          x = p_x + x;
+//          y = p_y + y;
+//          break;
+//       case CORNER_RIGHT_UPPER:
+//          x = p_x - x;
+//          y = p_y + y;
+//          break;
+//       case CORNER_LEFT_LOWER:
+//          x = p_x + x;
+//          y = p_y - y;
+//          break;
+//       case CORNER_RIGHT_LOWER:
+//          x = p_x - x;
+//          y = p_y - y;
+//          break;
+//    }
+// }
