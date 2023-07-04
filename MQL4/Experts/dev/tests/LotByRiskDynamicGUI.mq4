@@ -50,6 +50,8 @@
 #property description "The first feature of the panel is convenient placing of orders using control lines."
 #property description "The second feature is the calculation of the order volume for a given risk and the presence of a stop loss line."
 
+#include <Controls\Defines.mqh>
+
 input int         MAGIC       = 111087;            // magic
 input string      COMMENT     = "";                // comment
 input int         FONT        = 7;
@@ -62,6 +64,12 @@ input string      HK_PR       = "P";               // hotkey for PRICE
 input int         SLIPPAGE    = 5;                 // slippage
 input double      RISK        = 1.0;               // risk
 input double      COMISSION   = 0.0;               // comission
+
+#undef CONTROLS_DIALOG_COLOR_BG
+#undef CONTROLS_DIALOG_COLOR_CLIENT_BG
+
+#define CONTROLS_DIALOG_COLOR_BG             C'87,173,202'
+#define CONTROLS_DIALOG_COLOR_CLIENT_BG      C'87,173,202'
 
 #include <custom/lot_by_risk_panel.mqh>
 #include <custom/Trade.mqh>
@@ -80,24 +88,19 @@ string s_line = pref + "_s_line";
 string p_line = pref + "_p_line";
 
 string parent = pref+"_RectLabel";
-int mtp = 1;
 
 int OnInit(){
-   panel.SetRiskDefault(DoubleToString(RISK));
+   panel.SetRiskDefault(DoubleToString(RISK, 1));
    panel.SetCommentDefault(COMMENT);
+   
    if(!panel.Create(0, "LBR", 0, X_OFFSET, Y_OFFSET, PANEL_WIDTH, PANEL_HEIGHT, CORNER, FONT)){
       return (INIT_FAILED);
    }
    
    panel.Run();
-//---
-   // ChartSetInteger(ChartID(), CHART_EVENT_MOUSE_MOVE, 1);
-   // trade.SetExpertMagic(MAGIC);
-   
-   // if(Digits() == 5 || Digits() == 3)mtp = 10;
-   // Comment("");
-   // ObjectsDelete();
 
+   trade.SetExpertMagic(MAGIC);
+//---
    // RectLabelCreate(parent, X_OFFSET, Y_OFFSET, 108, 90, CORNER);
    // // ButtonCreate(   pref+"_Test",      5, 5, 100, 20, CORNER, "TEST", "Arial", FNT, clrBlack, C'33,218,51');
    // LabelCreate(    pref+"_LabelCmnt", 4, 6,  CORNER,      "Comment:", "Arial", FNT);
@@ -229,21 +232,7 @@ long StringToToken(const string& s){
 }
 
 //+------------------------------------------------------------------+
-  
-//Удаляет все объекты, используемые этим советником
-// ot = общее количество всех объектов
-// on = имя объекта
-// void ObjectsDelete(){
-//    int ot = ObjectsTotal();
-//    string on = "";
-//    if(ot > 0){
-//       for(int i = ot-1; i>=0; i--){
-//          on = ObjectName(ChartID(), i);
-//          if(StringFind(on, pref)!= -1) ObjectDelete(ChartID(), on);
-//       }
-//    }
-// }
-//+------------------------------------------------------------------+
+
 bool Trade(){
    
    string sr = ObjectGetString(ChartID(), pref+"_EditRisk", OBJPROP_TEXT);

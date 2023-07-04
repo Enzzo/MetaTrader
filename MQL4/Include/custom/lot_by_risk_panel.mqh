@@ -3,6 +3,8 @@
 #include <Controls/Button.mqh>
 #include <Controls/Edit.mqh>
 
+
+
 class lot_by_risk : public CAppDialog{
 private:
     string prefix_, comment_text_, risk_text_;
@@ -91,7 +93,7 @@ bool lot_by_risk::LabelRiskCreate(){
 bool lot_by_risk::EditCmntCreate(){
     if(!ed_cmnt_.Create(0, prefix_ + "edit_cmnt", 0, 50, 4, 98, 20)) return (false);
     if(!ed_cmnt_.FontSize(font_)) return (false);
-    if(!ed_cmnt_.Text(risk_text_)) return (false);
+    if(!ed_cmnt_.Text(comment_text_)) return (false);
     if(!Add(ed_cmnt_)) return (false);
     return (true);
 }
@@ -99,7 +101,7 @@ bool lot_by_risk::EditCmntCreate(){
 bool lot_by_risk::EditRiskCreate(){
     if(!ed_risk_.Create(0, prefix_ + "edit_risk", 0, 50, 22, 98, 40)) return (false);
     if(!ed_risk_.FontSize(font_)) return (false);
-    if(!ed_risk_.Text(comment_text_)) return (false);
+    if(!ed_risk_.Text(risk_text_)) return (false);
     if(!Add(ed_risk_)) return (false);
     return (true);
 }
@@ -108,6 +110,7 @@ bool lot_by_risk::ButtonOpenCreate(){
     if(!bt_trade_.Create(0, prefix_ + "button_trade", 0, 4, 42, 98, 58)) return (false);
     if(!bt_trade_.FontSize(font_)) return (false);
     if(!bt_trade_.Text("Trade")) return (false);
+    if(!bt_trade_.ColorBackground(C'33,218,51')) return (false);
     if(!Add(bt_trade_)) return (false);
     return (true);
 }
@@ -116,6 +119,7 @@ bool lot_by_risk::ButtonCloseCreate(){
     if(!bt_close_.Create(0, prefix_ + "button_close", 0, 4, 60, 98, 76)) return (false);
     if(!bt_close_.FontSize(font_)) return (false);
     if(!bt_close_.Text("Close")) return (false);
+    if(!bt_close_.ColorBackground(clrRed)) return (false);
     if(!Add(bt_close_)) return (false);
     return (true);
 }
