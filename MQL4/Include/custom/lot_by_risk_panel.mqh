@@ -2,8 +2,11 @@
 #include <Controls/Label.mqh>
 #include <Controls/Button.mqh>
 #include <Controls/Edit.mqh>
+#include <Controls/Defines.mqh>
 
+typedef bool (*CallBack)();
 
+void test(){};
 
 class lot_by_risk : public CAppDialog{
 private:
@@ -22,6 +25,14 @@ public:
 
     bool Create(const long chart, const string name, const int subwin, const int x, const int y, const int w, const int h, const ENUM_BASE_CORNER corner, const int font);
 
+    virtual bool OnEvent(const int id,const long& lparam,const double& dparam,const string& sparam);
+
+    void SetFooTrade(CallBack ft) { Trade = ft;};
+    void SetFooClose(CallBack fc) { Close = fc;};
+
+    double GetRisk() const;
+    string GetComment() const;
+
 protected:
     bool LabelCmntCreate();
     bool LabelRiskCreate();
@@ -29,6 +40,10 @@ protected:
     bool EditRiskCreate();
     bool ButtonOpenCreate();
     bool ButtonCloseCreate();
+
+private:
+    CallBack Trade;
+    CallBack Close;
 };
 
 bool lot_by_risk::Create(const long chart, const string name, const int subwin, const int x, const int y, const int w, const int h, const ENUM_BASE_CORNER corner, const int font){
@@ -122,4 +137,20 @@ bool lot_by_risk::ButtonCloseCreate(){
     if(!bt_close_.ColorBackground(clrRed)) return (false);
     if(!Add(bt_close_)) return (false);
     return (true);
+}
+
+double lot_by_risk::GetRisk() const {
+    string sr = ed_risk_.Text();
+    StringReplace(sr, ",", ".");
+    return NormalizeDouble(StringToDouble(sr), 1);
+}
+
+string lot_by_risk::GetComment() const{
+    return ed_cmnt_.Text();
+}
+
+bool lot_by_risk::OnEvent(const int id,const long& lparam,const double& dparam,const string& sparam) {
+    if(id==(ON_CLICK+CHARTEVENT_CUSTOM) && lparam==bt_trade_.Id()) { Trade(); return(true); }
+    if(id==(ON_CLICK+CHARTEVENT_CUSTOM) && lparam==bt_close_.Id()) { Close(); return(true); }
+    return(CAppDialog::OnEvent(id,lparam,dparam,sparam)); 
 }
