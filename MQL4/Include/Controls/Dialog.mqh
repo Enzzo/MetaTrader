@@ -12,9 +12,9 @@
 //+------------------------------------------------------------------+
 //| Resources                                                        |
 //+------------------------------------------------------------------+
-#resource "res\\Close.bmp"
-#resource "res\\Restore.bmp"
-#resource "res\\Turn.bmp"
+#resource "res\\CloseOn.bmp"
+#resource "res\\RestoreOn.bmp"
+#resource "res\\TurnOn.bmp"
 //+------------------------------------------------------------------+
 //| Class CDialog                                                    |
 //| Usage: base class to create dialog boxes                         |
@@ -272,7 +272,7 @@ bool CDialog::CreateButtonClose(void)
 //--- create
    if(!m_button_close.Create(m_chart_id,m_name+"Close",m_subwin,x1,y1,x2,y2))
       return(false);
-   if(!m_button_close.BmpNames("::res\\Close.bmp"))
+   if(!m_button_close.BmpNames("::res\\CloseOn.bmp"))
       return(false);
    if(!CWndContainer::Add(m_button_close))
       return(false);
@@ -672,7 +672,7 @@ bool CAppDialog::CreateButtonMinMax(void)
 //--- create
    if(!m_button_minmax.Create(m_chart_id,m_name+"MinMax",m_subwin,x1,y1,x2,y2))
       return(false);
-   if(!m_button_minmax.BmpNames("::res\\Turn.bmp","::res\\Restore.bmp"))
+   if(!m_button_minmax.BmpNames("::res\\TurnOn.bmp","::res\\RestoreOn.bmp"))
       return(false);
    if(!CWndContainer::Add(m_button_minmax))
       return(false);

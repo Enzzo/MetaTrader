@@ -2,6 +2,10 @@
 //|                                                    LotByRisk.mq4 |
 //|                                                           Sergey |
 //|                             https://www.mql5.com/ru/users/enzzo/ |
+// version 1.05:
+// - Переписал GUI. Теперь панель можно перетаскивать мышкой
+// - Поправил ошибки с комментариями
+
 // version 1.04:
 // - Исправил ошибку с комментариями
 // - Изменил комиссию по-умолчанию на 0.0, так как она у всех разная
@@ -19,6 +23,8 @@
 // Внесены дополнения по просьбам пользователей с mql5.com
 //
 // TODO:
+// - Перерисовать кнопки закрытия и сворачивания окна
+// - добавить границы к окну
 // - Добавить возможность ввода значений вручную
 // - Добавить вертикальную линию, после которой открывается рыночный ордер
 // - Добавить вертикальную линию, после которой ордер закроется
@@ -43,7 +49,7 @@
 
 #property copyright "Sergey"
 #property link      "https://www.mql5.com/ru/users/enzzo/"
-#property version   "1.04"
+#property version   "1.05"
 
 #property description "The Lot by Risk trading panel is designed for manual trading."
 #property description "This is an alternative means for sending orders."
@@ -87,8 +93,6 @@ string t_line = pref + "_t_line";
 string s_line = pref + "_s_line";
 string p_line = pref + "_p_line";
 
-string parent = pref+"_RectLabel";
-
 
 int OnInit(){
    panel.SetRiskDefault(DoubleToString(RISK, 1));
@@ -103,6 +107,7 @@ int OnInit(){
    panel.Run();
 
    trade.SetExpertMagic(MAGIC);
+   trade.SetExpertComment(COMMENT);
 //---
    return(INIT_SUCCEEDED);
 }
@@ -212,18 +217,20 @@ long StringToToken(const string& s){
 }
 
 //+------------------------------------------------------------------+
-
 bool Trade(){   
    
-   string cmnt = panel.GetComment();
-   
+   string cmnt = panel.GetComment() == trade.GetExpertComment() ? "" : panel.GetComment();
    double tp   = NormalizeDouble(ObjectGetDouble(ChartID(), t_line, OBJPROP_PRICE), Digits());
    double sl   = NormalizeDouble(ObjectGetDouble(ChartID(), s_line, OBJPROP_PRICE), Digits());
    double pr   = NormalizeDouble(ObjectGetDouble(ChartID(), p_line, OBJPROP_PRICE), Digits());
-   
+
    double risk = sl == 0.0?0.0:panel.GetRisk();
    int    pts = 1;
    
+   if(ObjectFind(ChartID(), t_line)!= -1)ObjectDelete(ChartID(), t_line);
+   if(ObjectFind(ChartID(), s_line)!= -1)ObjectDelete(ChartID(), s_line);
+   if(ObjectFind(ChartID(), p_line)!= -1)ObjectDelete(ChartID(), p_line);
+
    //Рассчитаем количество пунктов до стоплосса
    if(sl != 0.0){
       //Если цена не задана и ордер будет рыночным, то
@@ -280,14 +287,14 @@ bool Trade(){
       //5
       if(sl == 0.0){
          if(tp > pr){
-            if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
-            if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
+            if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
+            if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
             
             if(pr == Ask)return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
          }
          if(tp < pr){
-            if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
-            if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
+            if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
+            if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
             if(pr == Bid)return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
          }
          //5 D
@@ -298,13 +305,13 @@ bool Trade(){
       //6
       if(tp == 0.0){
          if(sl < pr){
-            if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
-            if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
+            if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
+            if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
             if(pr == Ask)return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
          }
          if(sl > pr){
-            if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
-            if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
+            if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
+            if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
             if(pr == Bid)return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
          }
          //6 D
@@ -316,16 +323,16 @@ bool Trade(){
       if(tp > pr && sl > pr)return Wrong("take profit and stop loss above the opening price");
       if(tp < pr && sl < pr)return Wrong("take profit and stop loss below the opening price");
       if(tp > pr){
-         if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
-         if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
+         if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
+         if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
                      return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
       }
       if(tp < pr){
-         if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
-         if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0);
+         if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
+         if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
                      return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
       }
-   }
+   }  
 
    return false;
 }
