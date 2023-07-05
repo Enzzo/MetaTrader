@@ -29,6 +29,7 @@ protected:
    MqlTradeResult    m_result;               // result data
    MqlTradeCheckResult m_check_result;       // result check data
    bool              m_async_mode;           // trade mode
+   string            comment_;
    ulong             m_magic;                // expert magic number
    ulong             m_deviation;            // deviation default
    ENUM_ORDER_TYPE_FILLING m_type_filling;
@@ -140,6 +141,9 @@ public:
    //--- trade request
    string            FormatRequest(string &str,const MqlTradeRequest &request) const;
    string            FormatRequestResult(string &str,const MqlTradeRequest &request,const MqlTradeResult &result) const;
+   
+   void              SetExpertComment(const string comment) {comment_ = comment;}
+   string            GetExpertComment() const {return comment_;};
 
 protected:
    bool              FillingCheck(const string symbol);
