@@ -49,7 +49,7 @@
 
 #property copyright "Sergey"
 #property link      "https://www.mql5.com/ru/users/enzzo/"
-#property version   "1.05"
+#property version   "1.00"
 
 #property description "The Lot by Risk trading panel is designed for manual trading."
 #property description "This is an alternative means for sending orders."
