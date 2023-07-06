@@ -113,16 +113,19 @@ public:
                                  const ENUM_ORDER_TYPE_TIME type_time,const datetime expiration,const double stoplimit=0.0);
    bool              OrderDelete(const ulong ticket);
    //--- additions methods
-   bool              Buy(const double volume,const string symbol=NULL,double price=0.0,const double sl=0.0,const double tp=0.0,const string comment="");
-   bool              Sell(const double volume,const string symbol=NULL,double price=0.0,const double sl=0.0,const double tp=0.0,const string comment="");
-   bool              BuyLimit(const double volume,const double price,const string symbol=NULL,const double sl=0.0,const double tp=0.0,
-                              const ENUM_ORDER_TYPE_TIME type_time=ORDER_TIME_GTC,const datetime expiration=0,const string comment="");
-   bool              BuyStop(const double volume,const double price,const string symbol=NULL,const double sl=0.0,const double tp=0.0,
-                             const ENUM_ORDER_TYPE_TIME type_time=ORDER_TIME_GTC,const datetime expiration=0,const string comment="");
-   bool              SellLimit(const double volume,const double price,const string symbol=NULL,const double sl=0.0,const double tp=0.0,
-                               const ENUM_ORDER_TYPE_TIME type_time=ORDER_TIME_GTC,const datetime expiration=0,const string comment="");
-   bool              SellStop(const double volume,const double price,const string symbol=NULL,const double sl=0.0,const double tp=0.0,
-                              const ENUM_ORDER_TYPE_TIME type_time=ORDER_TIME_GTC,const datetime expiration=0,const string comment="");
+   bool              Buy(const string symbol=NULL, const double volume = .01, const double sl=0.0,const double tp=0.0,const string comment="");
+   bool              Sell(const string symbol=NULL, const double volume = .01, const double sl=0.0,const double tp=0.0,const string comment="");
+
+   bool              BuyLimit(const string symbol=NULL,const double volume = .01 ,const double price = .0 ,const double sl=0.0,const double tp=0.0,
+                             const datetime expiration=0, const string comment="");
+
+   bool              BuyStop(const string symbol=NULL,const double volume = .01 ,const double price = .0 ,const double sl=0.0,const double tp=0.0,
+                             const datetime expiration=0, const string comment="");
+
+   bool              SellLimit(const string symbol=NULL,const double volume = .01 ,const double price = .0 ,const double sl=0.0,const double tp=0.0,
+                             const datetime expiration=0, const string comment="");
+   bool              SellStop(const string symbol=NULL,const double volume = .01 ,const double price = .0 ,const double sl=0.0,const double tp=0.0,
+                             const datetime expiration=0, const string comment="");
    //--- method check
    virtual double    CheckVolume(const string symbol,double volume,double price,ENUM_ORDER_TYPE order_type);
    virtual bool      OrderCheck(const MqlTradeRequest &request,MqlTradeCheckResult &check_result);
@@ -145,6 +148,9 @@ public:
    void              SetExpertComment(const string comment) {comment_ = comment;}
    string            GetExpertComment() const {return comment_;};
 
+   bool              CloseTrades() ;
+   bool              DeletePendings() ;
+
 protected:
    bool              FillingCheck(const string symbol);
    bool              ExpirationCheck(const string symbol);
@@ -154,6 +160,9 @@ protected:
    bool              IsHedging(void) const { return(m_margin_mode==ACCOUNT_MARGIN_MODE_RETAIL_HEDGING); }
    //--- position select depending on netting or hedging
    bool              SelectPosition(const string symbol);
+
+private:
+   const string      SetComment(const string comment)const;
   };
 //+------------------------------------------------------------------+
 //| Constructor                                                      |
@@ -809,7 +818,7 @@ bool CTrade::IsStopped(const string function)
 //+------------------------------------------------------------------+
 //| Buy operation                                                    |
 //+------------------------------------------------------------------+
-bool CTrade::Buy(const double volume,const string symbol=NULL,double price=0.0,const double sl=0.0,const double tp=0.0,const string comment="")
+bool CTrade::Buy(const string symbol=NULL, const double volume = .01, const double sl=0.0,const double tp=0.0,const string comment="")
   {
 //--- check volume
    if(volume<=0.0)
@@ -820,15 +829,15 @@ bool CTrade::Buy(const double volume,const string symbol=NULL,double price=0.0,c
 //--- check symbol
    string symbol_name=(symbol==NULL) ? _Symbol : symbol;
 //--- check price
-   if(price==0.0)
-      price=SymbolInfoDouble(symbol_name,SYMBOL_ASK);
+   double price=SymbolInfoDouble(symbol_name,SYMBOL_ASK);
 //---
-   return(PositionOpen(symbol_name,ORDER_TYPE_BUY,volume,price,sl,tp,comment));
+   string cmnt = SetComment(comment);
+   return(PositionOpen(symbol_name,ORDER_TYPE_BUY,volume,price,sl,tp,cmnt));
   }
 //+------------------------------------------------------------------+
 //| Sell operation                                                   |
 //+------------------------------------------------------------------+
-bool CTrade::Sell(const double volume,const string symbol=NULL,double price=0.0,const double sl=0.0,const double tp=0.0,const string comment="")
+bool CTrade::Sell(const string symbol=NULL, const double volume = .01, const double sl=0.0,const double tp=0.0,const string comment="")
   {
 //--- check volume
    if(volume<=0.0)
@@ -839,16 +848,16 @@ bool CTrade::Sell(const double volume,const string symbol=NULL,double price=0.0,
 //--- check symbol
    string symbol_name=(symbol==NULL) ? _Symbol : symbol;
 //--- check price
-   if(price==0.0)
-      price=SymbolInfoDouble(symbol_name,SYMBOL_BID);
+   double price=SymbolInfoDouble(symbol_name,SYMBOL_BID);
 //---
-   return(PositionOpen(symbol_name,ORDER_TYPE_SELL,volume,price,sl,tp,comment));
+   string cmnt = SetComment(comment);
+   return(PositionOpen(symbol_name,ORDER_TYPE_SELL,volume,price,sl,tp,cmnt));
   }
 //+------------------------------------------------------------------+
 //| Send BUY_LIMIT order                                             |
 //+------------------------------------------------------------------+
-bool CTrade::BuyLimit(const double volume,const double price,const string symbol=NULL,const double sl=0.0,const double tp=0.0,
-                      const ENUM_ORDER_TYPE_TIME type_time=ORDER_TIME_GTC,const datetime expiration=0,const string comment="")
+bool CTrade::BuyLimit(const string symbol=NULL,const double volume = .01 ,const double price = .0 ,const double sl=0.0,const double tp=0.0,
+                             const datetime expiration=0, const string comment="")
   {
    string symbol_name;
 //--- check volume
@@ -860,13 +869,14 @@ bool CTrade::BuyLimit(const double volume,const double price,const string symbol
 //--- check symbol
    symbol_name=(symbol==NULL)?Symbol():symbol;
 //--- send "BUY_LIMIT" order
-   return(OrderOpen(symbol_name,ORDER_TYPE_BUY_LIMIT,volume,0.0,price,sl,tp,type_time,expiration,comment));
+   string cmnt = SetComment(comment);
+   return(OrderOpen(symbol_name,ORDER_TYPE_BUY_LIMIT,volume,0.0,price,sl,tp,ORDER_TIME_GTC,expiration,cmnt));
   }
 //+------------------------------------------------------------------+
 //| Send BUY_STOP order                                              |
 //+------------------------------------------------------------------+
-bool CTrade::BuyStop(const double volume,const double price,const string symbol=NULL,const double sl=0.0,const double tp=0.0,
-                     const ENUM_ORDER_TYPE_TIME type_time=ORDER_TIME_GTC,const datetime expiration=0,const string comment="")
+bool CTrade::BuyStop(const string symbol=NULL,const double volume = .01 ,const double price = .0 ,const double sl=0.0,const double tp=0.0,
+                             const datetime expiration=0, const string comment="")
   {
    string symbol_name;
 //--- check volume
@@ -878,13 +888,14 @@ bool CTrade::BuyStop(const double volume,const double price,const string symbol=
 //--- check symbol
    symbol_name=(symbol==NULL)?Symbol():symbol;
 //--- send "BUY_STOP" order
-   return(OrderOpen(symbol_name,ORDER_TYPE_BUY_STOP,volume,0.0,price,sl,tp,type_time,expiration,comment));
+   string cmnt = SetComment(comment);
+   return(OrderOpen(symbol_name,ORDER_TYPE_BUY_STOP,volume,0.0,price,sl,tp,ORDER_TIME_GTC,expiration,cmnt));
   }
 //+------------------------------------------------------------------+
 //| Send SELL_LIMIT order                                            |
 //+------------------------------------------------------------------+
-bool CTrade::SellLimit(const double volume,const double price,const string symbol=NULL,const double sl=0.0,const double tp=0.0,
-                       const ENUM_ORDER_TYPE_TIME type_time=ORDER_TIME_GTC,const datetime expiration=0,const string comment="")
+bool CTrade::SellLimit(const string symbol=NULL,const double volume = .01 ,const double price = .0 ,const double sl=0.0,const double tp=0.0,
+                             const datetime expiration=0, const string comment="")
   {
    string symbol_name;
 //--- check volume
@@ -896,13 +907,14 @@ bool CTrade::SellLimit(const double volume,const double price,const string symbo
 //--- check symbol
    symbol_name=(symbol==NULL)?Symbol():symbol;
 //--- send "SELL_LIMIT" order
-   return(OrderOpen(symbol_name,ORDER_TYPE_SELL_LIMIT,volume,0.0,price,sl,tp,type_time,expiration,comment));
+   string cmnt = SetComment(comment);
+   return(OrderOpen(symbol_name,ORDER_TYPE_SELL_LIMIT,volume,0.0,price,sl,tp,ORDER_TIME_GTC,expiration,cmnt));
   }
 //+------------------------------------------------------------------+
 //| Send SELL_STOP order                                             |
 //+------------------------------------------------------------------+
-bool CTrade::SellStop(const double volume,const double price,const string symbol=NULL,const double sl=0.0,const double tp=0.0,
-                      const ENUM_ORDER_TYPE_TIME type_time=ORDER_TIME_GTC,const datetime expiration=0,const string comment="")
+bool CTrade::SellStop(const string symbol=NULL,const double volume = .01 ,const double price = .0 ,const double sl=0.0,const double tp=0.0,
+                             const datetime expiration=0, const string comment="")
   {
    string symbol_name;
 //--- check volume
@@ -914,7 +926,8 @@ bool CTrade::SellStop(const double volume,const double price,const string symbol
 //--- check symbol
    symbol_name=(symbol==NULL)?Symbol():symbol;
 //--- send "SELL_STOP" order
-   return(OrderOpen(symbol_name,ORDER_TYPE_SELL_STOP,volume,0.0,price,sl,tp,type_time,expiration,comment));
+   string cmnt = SetComment(comment);
+   return(OrderOpen(symbol_name,ORDER_TYPE_SELL_STOP,volume,0.0,price,sl,tp,ORDER_TIME_GTC,expiration,cmnt));
   }
 //+------------------------------------------------------------------+
 //| Converts the position type to text                               |
@@ -1710,3 +1723,50 @@ bool CTrade::SelectPosition(const string symbol)
    return(res);
   }
 //+------------------------------------------------------------------+
+
+bool CTrade::CloseTrades(){
+   string symbol = Symbol();
+//---
+   if(IsHedging())
+     {
+      uint total=PositionsTotal();
+      for(int i = total - 1; 0 <= i; --i)
+        {
+         string position_symbol=PositionGetSymbol(i);
+         if(position_symbol==symbol && m_magic==PositionGetInteger(POSITION_MAGIC))
+           {
+            PositionClose(PositionGetInteger(POSITION_TICKET));
+           }
+        }
+     }
+   else
+      if(PositionSelect(symbol)){
+         PositionClose(PositionGetInteger(POSITION_TICKET));
+      }
+//---
+   return(true);
+}
+
+bool CTrade::DeletePendings(void){
+   if(OrdersTotal() == 0)
+      return true;
+   int total = OrdersTotal();
+   for(int i = total - 1; i >= 0; i--){
+      ulong ticket = OrderGetTicket(i);
+      if(OrderGetInteger(ORDER_MAGIC) == m_magic && OrderGetString(ORDER_SYMBOL) == Symbol()){
+         OrderDelete(ticket);
+      }
+   }
+   return true;
+}
+
+string CTrade::SetComment(const string comment)const{
+   string cmnt = comment_;
+   if(StringLen(comment_) > 0 && StringLen(comment) > 0){
+      cmnt += "_" + comment;
+   }
+   else if(StringLen(comment) > 0){
+      cmnt = comment;
+   }
+   return cmnt;
+}
