@@ -8,6 +8,35 @@
 #include <TableOrders.mqh>
 #include <Time.mqh>
 
+struct n_orders{
+    int all_orders;
+    int long_orders;
+    int short_orders;
+    int buy_sell_orders;
+    int delayed_orders;
+    int buy_orders;
+    int sell_orders;
+    int buy_stop_orders;
+    int sell_stop_orders;
+    int buy_limit_orders;
+    int sell_limit_orders;
+    int buy_stop_limit_orders;
+    int sell_stop_limit_orders;
+};
+
+enum ENUM_ORDER_MODE{
+    ORDER_ADD, ORDER_DELETE
+};
+
+enum ENUM_TYPE_DELETED_ORDER{
+
+};
+
+class mm{
+public:
+    mm(){};
+};
+
 class CModel : public CObject{
 protected:
     long                m_magic;
@@ -51,3 +80,32 @@ protected:
     bool                SendOrder(  string symbol, ENUM_ORDER_TYPE op_type, ENUM_ORDER_MODE op_mode, ulong ticket, double lot, 
                                     double price, double stop_loss, double take_profit, string comment);
 };
+
+bool CModel::SendOrder( string symbol,
+                        ENUM_ORDER_TYPE op_type,
+                        ENUM_ORDER_MODE op_mode,
+                        ulong ticket,
+                        double lot,
+                        double price,
+                        double stop_loss,
+                        double take_profit,
+                        string comment){
+    ulong code_return = 0;
+    CSymbolInfo symbol_info;
+    CTrade      trade;
+    
+    symbol_info.Name(symbol);
+    symbol_info.RefreshRates();
+    mm send_order_mm;
+
+    double lot_current;
+    double lot_send = lot;
+    double lot_max = m_symbol_info.LotsMax();
+
+    bool res = false;
+    int floor_lot = (int)MathFloor(lot/lot_max);
+    if(MathMod(lot, lot_max) == 0) floor_lot -= 1;
+    int itteration = (int)MathCeil(lot/lot_max);
+    
+    return (res);
+}
