@@ -106,6 +106,52 @@ bool CModel::SendOrder( string symbol,
     int floor_lot = (int)MathFloor(lot/lot_max);
     if(MathMod(lot, lot_max) == 0) floor_lot -= 1;
     int itteration = (int)MathCeil(lot/lot_max);
-    
+    if(itteration > 1){
+        Print("The order volume exceeds the maximum allowed volume. It will be divided into ", itteration, " transactions");
+    }
+    for(int i = 1; i <=  itteration; ++i){
+        if(i == itteration){
+            lot_send = lot - (floor_lot * lot_max);
+        }
+        else{
+            lot_send = lot_max;
+        }
+        for(int i = 0; i < 3; ++i){
+            symbol_info.RefreshRates();
+            if(op_type == ORDER_TYPE_BUY) price = symbol_info.Ask();
+            if(op_type == ORDER_TYPE_SELL) price = symbol_info.Bid();
+            m_trade.SetDeviationInPoints(ulong(.0003/(double)symbol_info.Point()));
+            m_trade.SetExpertMagicNumber(m_magic);
+            res = m_trade.PositionOpen(m_symbol, op_type, lot_send, price, .0, .0, comment);
+            // Засыпание не удалять и не перемещать! Иначе ордер не успеет попасть в m_history_order_info
+            Sleep(3000);
+            if( m_trade.ResultRetcode() == TRADE_RETCODE_PLACED ||
+                m_trade.ResultRetcode() == TRADE_RETCODE_DONE_PARTIAL ||
+                m_trade.ResultRetcode() == TRADE_RETCODE_DONE){
+                    if(op_mode == ORDER_ADD){
+                        res = Add(m_trade.ResultRetcode(), stop_loss, take_profit);
+                    }
+                    if(op_mode == ORDER_DELETE){
+                        res = Delete(ticket);
+                    }
+                    code_return = m_trade.ResultRetcode();
+                    break;
+                }
+                
+            else{
+                Print(m_trde.ResultComment());
+            }
+            if( m_trade.ResultRetcode() == TRADE_RETCODE_TRADE_DISABLED ||
+                m_trade.ResultRetcode() == TRADE_RETCODE_MARKET_CLOSED ||
+                m_trade.ResultRetcode() == TRADE_RETCODE_NO_MONEY ||
+                m_trade.ResultRetcode() == TRADE_RETCODE_TOO_MANY_REQUESTS ||
+                m_trade.ResultRetcode() == TRADE_RETCODE_SERVER_DISABLES_AT ||
+                m_trade.ResultRetcode() == TRADE_RETCODE_CLIENT_DISABLES_AT ||
+                m_trade.ResultRetcode() == TRADE_RETCODE_LIMIT_ORDERS ||
+                m_trade.ResultRetcode() == TRADE_RETCODE_LIMIT_VOLUME){
+                    break;
+                }
+        }
+    }
     return (res);
 }
