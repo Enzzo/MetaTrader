@@ -1,0 +1,121 @@
+/*
+Copyright 2021 FXcoder
+
+This file is part of VP.
+
+VP is free software: you can redistribute it and/or modify it under the terms of the GNU General
+Public License as published by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+VP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for more details.
+
+You should have received a copy of the GNU General Public License along with VP. If not, see
+http://www.gnu.org/licenses/.
+*/
+
+// Time Shift. © FXcoder
+
+#property strict
+
+enum ENUM_VP_TIME_SHIFT
+{
+//	VP_TIME_SHIFT_PLUS_1440 = 1440,   // +24:00
+//	VP_TIME_SHIFT_PLUS_1410 = 1410,   // +23:30
+//	VP_TIME_SHIFT_PLUS_1380 = 1380,   // +23:00
+//	VP_TIME_SHIFT_PLUS_1350 = 1350,   // +22:30
+//	VP_TIME_SHIFT_PLUS_1320 = 1320,   // +22:00
+//	VP_TIME_SHIFT_PLUS_1290 = 1290,   // +21:30
+//	VP_TIME_SHIFT_PLUS_1260 = 1260,   // +21:00
+//	VP_TIME_SHIFT_PLUS_1230 = 1230,   // +20:30
+//	VP_TIME_SHIFT_PLUS_1200 = 1200,   // +20:00
+//	VP_TIME_SHIFT_PLUS_1170 = 1170,   // +19:30
+//	VP_TIME_SHIFT_PLUS_1140 = 1140,   // +19:00
+//	VP_TIME_SHIFT_PLUS_1110 = 1110,   // +18:30
+//	VP_TIME_SHIFT_PLUS_1080 = 1080,   // +18:00
+//	VP_TIME_SHIFT_PLUS_1050 = 1050,   // +17:30
+//	VP_TIME_SHIFT_PLUS_1020 = 1020,   // +17:00
+//	VP_TIME_SHIFT_PLUS_990 = 990,     // +16:30
+//	VP_TIME_SHIFT_PLUS_960 = 960,     // +16:00
+//	VP_TIME_SHIFT_PLUS_930 = 930,     // +15:30
+//	VP_TIME_SHIFT_PLUS_900 = 900,     // +15:00
+//	VP_TIME_SHIFT_PLUS_870 = 870,     // +14:30
+//	VP_TIME_SHIFT_PLUS_840 = 840,     // +14:00
+//	VP_TIME_SHIFT_PLUS_810 = 810,     // +13:30
+//	VP_TIME_SHIFT_PLUS_780 = 780,     // +13:00
+//	VP_TIME_SHIFT_PLUS_750 = 750,     // +12:30
+	VP_TIME_SHIFT_PLUS_720 = 720,     // +12:00
+//	VP_TIME_SHIFT_PLUS_690 = 690,     // +11:30
+	VP_TIME_SHIFT_PLUS_660 = 660,     // +11:00
+//	VP_TIME_SHIFT_PLUS_630 = 630,     // +10:30
+	VP_TIME_SHIFT_PLUS_600 = 600,     // +10:00
+//	VP_TIME_SHIFT_PLUS_570 = 570,     // +9:30
+	VP_TIME_SHIFT_PLUS_540 = 540,     // +9:00
+//	VP_TIME_SHIFT_PLUS_510 = 510,     // +8:30
+	VP_TIME_SHIFT_PLUS_480 = 480,     // +8:00
+//	VP_TIME_SHIFT_PLUS_450 = 450,     // +7:30
+	VP_TIME_SHIFT_PLUS_420 = 420,     // +7:00
+//	VP_TIME_SHIFT_PLUS_390 = 390,     // +6:30
+	VP_TIME_SHIFT_PLUS_360 = 360,     // +6:00
+//	VP_TIME_SHIFT_PLUS_330 = 330,     // +5:30
+	VP_TIME_SHIFT_PLUS_300 = 300,     // +5:00
+//	VP_TIME_SHIFT_PLUS_270 = 270,     // +4:30
+	VP_TIME_SHIFT_PLUS_240 = 240,     // +4:00
+//	VP_TIME_SHIFT_PLUS_210 = 210,     // +3:30
+	VP_TIME_SHIFT_PLUS_180 = 180,     // +3:00
+//	VP_TIME_SHIFT_PLUS_150 = 150,     // +2:30
+	VP_TIME_SHIFT_PLUS_120 = 120,     // +2:00
+//	VP_TIME_SHIFT_PLUS_90 = 90,       // +1:30
+	VP_TIME_SHIFT_PLUS_60 = 60,       // +1:00
+//	VP_TIME_SHIFT_PLUS_30 = 30,       // +0:30
+	VP_TIME_SHIFT_0 = 0,              // 0:00 (no shift)
+//	VP_TIME_SHIFT_MINUS_30 = -30,     // -0:30
+	VP_TIME_SHIFT_MINUS_60 = -60,     // -1:00
+//	VP_TIME_SHIFT_MINUS_90 = -90,     // -1:30
+	VP_TIME_SHIFT_MINUS_120 = -120,   // -2:00
+//	VP_TIME_SHIFT_MINUS_150 = -150,   // -2:30
+	VP_TIME_SHIFT_MINUS_180 = -180,   // -3:00
+//	VP_TIME_SHIFT_MINUS_210 = -210,   // -3:30
+	VP_TIME_SHIFT_MINUS_240 = -240,   // -4:00
+//	VP_TIME_SHIFT_MINUS_270 = -270,   // -4:30
+	VP_TIME_SHIFT_MINUS_300 = -300,   // -5:00
+//	VP_TIME_SHIFT_MINUS_330 = -330,   // -5:30
+	VP_TIME_SHIFT_MINUS_360 = -360,   // -6:00
+//	VP_TIME_SHIFT_MINUS_390 = -390,   // -6:30
+	VP_TIME_SHIFT_MINUS_420 = -420,   // -7:00
+//	VP_TIME_SHIFT_MINUS_450 = -450,   // -7:30
+	VP_TIME_SHIFT_MINUS_480 = -480,   // -8:00
+//	VP_TIME_SHIFT_MINUS_510 = -510,   // -8:30
+	VP_TIME_SHIFT_MINUS_540 = -540,   // -9:00
+//	VP_TIME_SHIFT_MINUS_570 = -570,   // -9:30
+	VP_TIME_SHIFT_MINUS_600 = -600,   // -10:00
+//	VP_TIME_SHIFT_MINUS_630 = -630,   // -10:30
+	VP_TIME_SHIFT_MINUS_660 = -660,   // -11:00
+//	VP_TIME_SHIFT_MINUS_690 = -690,   // -11:30
+	VP_TIME_SHIFT_MINUS_720 = -720,   // -12:00
+//	VP_TIME_SHIFT_MINUS_750 = -750,   // -12:30
+//	VP_TIME_SHIFT_MINUS_780 = -780,   // -13:00
+//	VP_TIME_SHIFT_MINUS_810 = -810,   // -13:30
+//	VP_TIME_SHIFT_MINUS_840 = -840,   // -14:00
+//	VP_TIME_SHIFT_MINUS_870 = -870,   // -14:30
+//	VP_TIME_SHIFT_MINUS_900 = -900,   // -15:00
+//	VP_TIME_SHIFT_MINUS_930 = -930,   // -15:30
+//	VP_TIME_SHIFT_MINUS_960 = -960,   // -16:00
+//	VP_TIME_SHIFT_MINUS_990 = -990,   // -16:30
+//	VP_TIME_SHIFT_MINUS_1020 = -1020, // -17:00
+//	VP_TIME_SHIFT_MINUS_1050 = -1050, // -17:30
+//	VP_TIME_SHIFT_MINUS_1080 = -1080, // -18:00
+//	VP_TIME_SHIFT_MINUS_1110 = -1110, // -18:30
+//	VP_TIME_SHIFT_MINUS_1140 = -1140, // -19:00
+//	VP_TIME_SHIFT_MINUS_1170 = -1170, // -19:30
+//	VP_TIME_SHIFT_MINUS_1200 = -1200, // -20:00
+//	VP_TIME_SHIFT_MINUS_1230 = -1230, // -20:30
+//	VP_TIME_SHIFT_MINUS_1260 = -1260, // -21:00
+//	VP_TIME_SHIFT_MINUS_1290 = -1290, // -21:30
+//	VP_TIME_SHIFT_MINUS_1320 = -1320, // -22:00
+//	VP_TIME_SHIFT_MINUS_1350 = -1350, // -22:30
+//	VP_TIME_SHIFT_MINUS_1380 = -1380, // -23:00
+//	VP_TIME_SHIFT_MINUS_1410 = -1410, // -23:30
+//	VP_TIME_SHIFT_MINUS_1440 = -1440, // -24:00
+};

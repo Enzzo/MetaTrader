@@ -3,7 +3,7 @@
 #property version   "1.00"
 // https://www.mql5.com/ru/articles/217
 
-#include <Model.mqh>
+#include <dev/test_model/Model.mqh>
 #include <Arrays/List.mqh>
 
 class cmodel_macd : public CModel{

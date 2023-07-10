@@ -5,8 +5,8 @@
 #include <Trade/PositionInfo.mqh>
 #include <Trade/DealInfo.mqh>
 
-#include <TableOrders.mqh>
-#include <Time.mqh>
+#include <dev/test_model/TableOrders.mqh>
+#include <dev/test_model/Time.mqh>
 
 struct n_orders{
     int all_orders;
