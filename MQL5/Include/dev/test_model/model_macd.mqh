@@ -97,3 +97,40 @@ bool cmodel_macd::InitIndicators(){
     }
     return (true);
 }
+
+bool cmodel_macd::Processing(){
+    m_symbol_info.Name(m_symbol);
+    m_symbol_info.RefreshRates();
+    CopyBuffer(this.m_handle_macd, 0, 1, 2, m_macd_buff_main);
+    m_macd_current = m_macd_buff_main[0];
+    m_macd_prefious = m_macd_buff_main[1];
+    GetNumberOrders(m_orders);
+    if(m_orders.buy_orders > 0)     LongClosed();
+    else                            LongOpened();
+    if(m_orders.sell_orders != 0)   ShorClosed();
+    else                            ShortOpened();
+}
+
+bool cmodel_macd::LongOpened(void){
+    if(m_symbol_info.TradeMode() == SYMBOL_TRADE_MODE_DISABLED) return (false);
+    if(m_symbol_info.TradeMode() == SYMBOL_TRADE_MODE_SHORTONLY) return (false);
+    if(m_symbol_info.TradeMode() == SYMBOL_TRADE_MODE_CLOSEONLY) return (false);
+
+    bool result, ticket_bool;
+    double lot = 0.1;
+    mm open_mm;
+    m_symbol_info.Name(m_symbol);
+    m_symbol_info.RefreshRates();
+    CopyBuffer(this.m_handle_macd, 0, 1, 2, m_macd_buff_main);
+
+    m_macd_current = m_macd_buff_main[0];
+    m_macd_previous = m_macd_buff_main[1];
+    GetNumberOrders(m_orders);
+
+    if(m_macd_current > 0 && m_)macd_prefious <= 0 && m_orders.byu_orders == 0){
+        lot = open_mm.jons_fp(m_symbol, ORDER_TYPE_BUY, m_symbol_info.Ask(), 0.1, 10000, m_delta);
+        result = SendOrder(m_symbol, ORDER_TYPE_BUY, ORDER_ADD, 0, lot, m_symbol_info.Ask(), 0, 0, "MACD buy");
+        return (result);
+    }
+    return (false);
+}
