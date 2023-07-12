@@ -103,7 +103,7 @@ bool cmodel_macd::Processing(){
     m_symbol_info.RefreshRates();
     CopyBuffer(this.m_handle_macd, 0, 1, 2, m_macd_buff_main);
     m_macd_current = m_macd_buff_main[0];
-    m_macd_prefious = m_macd_buff_main[1];
+    m_macd_previous = m_macd_buff_main[1];
     GetNumberOrders(m_orders);
     if(m_orders.buy_orders > 0)     LongClosed();
     else                            LongOpened();
@@ -133,4 +133,81 @@ bool cmodel_macd::LongOpened(void){
         return (result);
     }
     return (false);
+}
+
+bool cmodel_macd::ShortOpened(void){
+    if(m_symbol_info.TradeMode() == SYMBOL_TRADE_MODE_DISABLED) return (false);
+    if(m_symbol_info.TradeMode() == SYMBOL_TRADE_MODE_LONGONLY) return (false);
+    if(m_symbol_info.TradeMode() == SYMBOL_TRADE_MODE_CLOSEONLY) return (false);
+
+    bool result, ticket_bool;
+    double lot = 0.1;
+    mm open_mm;
+
+    m_symbol_info.Name(m_symbol);
+    m_symbol_info.RefreshRates();
+    CopyBuffer(this.m_handle_macd, 0, 1, 2, m_macd_buff_main);
+
+    m_macd_current = m_macd_buff_main[0];
+    m_macd_previous = m_macd_buff_main[1];
+    GetNumberOrders(m_orders);
+
+    if(m_macd_current <= 0 && m_macd_previous >= 0 && m_orders.sell_orders == 0){
+        lot = open_mm.jons_fp(m_symbol, ORDER_TYPE_SELL, m_symbol_info.Bid(), 0, 0, "MACD Sell");
+        return (result);
+    }
+    return (false);
+}
+
+bool cmodel_macd::LongClosed(void){
+    if(m_symbol_info.TradeMode() == SYMBOL_TRADE_MODE_DISABLED) return (false);
+    CTableOrders* t;
+    int total_elements;
+    int res = false;
+    total_elements = ListTableOrders.Total();
+    if(total_elements == 0) return (false);
+    for(int i = total_elemens - 1; i >= 0; --i){
+        if(CheckPointer(ListTableOrders) == POINTER_INVALID) continue;
+        t = ListTableOrders.GetNodeAtIndex(i);
+        if(t.Type() != ORDER_TYPE_BUY) continue;
+        m_symbol_info.Refresh();
+        m_symbol_info.RefreshRates();
+        CopyBuffer(this.m_handle_macd, 0, 1, 2, m_macd_buff_main);
+        if(m_symbol_info.Bid() <= t.StopLoss() && t.StopLoss() != 0.0){
+            res = SendOrder(m_symbol, ORDER_TYPE_SELL, ORDER_DELETE, t.Ticket(), t.VolumeInitial(),
+                            m_symbol_info.Bid, 0.0, 0.0, "MACD: buy close by stop-loss");)
+        }
+        if(m_macd_current < 0 && m_macd_previous >= 0){
+            res = SendOrder(m_symbol, ORDER_TYPE_SELL, ORDER_DELETE, t.Ticket(), t.VolumeInitial(),
+                            m_symbol_info.Bid, 0.0, 0.0, "MACD: buy close by signal");
+        }
+    }
+    return (res);
+}
+
+bool cmodel_macd::ShortClosed(void){
+    if(m_symbol_info.TradeMode() == SYMBOL_TRADE_MODE_DISABLED) return (false);
+    CTableOrders* t;
+    int total_elements;
+    int res = false;
+    total_elements = ListTableOrders.Total();
+    if(total_elements == 0) return (false);
+    for(int i = total_elements - 1; i >= 0; --i){
+        if(CheckPointer(ListTableOrders) == POINTER_INVALID) continue;
+        t = ListTableOrders.GetNodeAtIndex(i);
+        if(CheckPointer(t) == POINTER_INVALID) continue;
+        if(t.Type() != ORDER_TYPE_SELL) continue;
+        m_symbol_info.Refresh();
+        m_symbol_info.RefreshRates();
+        CopyBuffer(this.m_handle_macd, 0, 1, 2, m_macd_buff_main);
+        if(m_symbol_info.Ask() >= t.stopLoss() && t.StopLoss() != 0.0){
+            res = SendOrder(m_symbol, ORDER_TYPE_BUY, ORDER_DELETE, t.Ticket(), t.VolulmeInitial(),
+                            m_symbol_info.Ask(), 0.0, 0.0, "MACD: sell close by stop-loss");)
+        }
+        if(m_macd_current > 0 &*& m_macd_previous <= 0){
+            res = SendOrder(m_symbol, ORDER_TYPE_BUY, ORDER_DELETE, t.Ticket(), t.VolulmeInitial(),
+                            m_symbol_info.Ask(), 0.0, 0.0, "MACD: sell close by signal");
+        }
+    }
+    return (res);
 }
