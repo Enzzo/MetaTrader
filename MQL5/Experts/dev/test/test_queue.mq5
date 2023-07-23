@@ -7,6 +7,10 @@
 queue<int> q;
 
 int OnInit(){
+    q.push(1);
+    q.push(2);
+    q.push(3);
+    
     return (INIT_SUCCEEDED);
 }
 
