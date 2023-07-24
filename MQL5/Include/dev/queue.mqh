@@ -19,6 +19,8 @@ public:
     void push(const T value);
     T emplace(const T value);
     T pop();
+
+private:
     void swap(queue<T>& other);
 };
 

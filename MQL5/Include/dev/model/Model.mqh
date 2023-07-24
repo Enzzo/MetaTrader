@@ -9,6 +9,9 @@
 #include <dev/model/Time.mqh>
 
 // test 
+=======
+// test 2
+// test 3
 
 struct n_orders{
     int all_orders;
@@ -34,6 +37,9 @@ enum ENUM_TYPE_DELETED_ORDER{
 
 };
 
+//  --------------------------------------------------------------------------
+//  class mm                                                                 |
+//  --------------------------------------------------------------------------
 class mm{
     CSymbolInfo m_symbol;
 
