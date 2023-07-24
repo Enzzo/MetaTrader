@@ -1,5 +1,4 @@
-#include <dev/test_model/Model.mqh>
-// # include <mm.mqh>
+#include <dev/model/Model.mqh>
 
 struct cmodel_macd_param{
     string          symbol;
@@ -166,7 +165,7 @@ bool cmodel_macd::LongClosed(void){
     int res = false;
     total_elements = ListTableOrders.Total();
     if(total_elements == 0) return (false);
-    for(int i = total_elemens - 1; i >= 0; --i){
+    for(int i = total_elements - 1; i >= 0; --i){
         if(CheckPointer(ListTableOrders) == POINTER_INVALID) continue;
         t = ListTableOrders.GetNodeAtIndex(i);
         if(t.Type() != ORDER_TYPE_BUY) continue;
@@ -175,11 +174,11 @@ bool cmodel_macd::LongClosed(void){
         CopyBuffer(this.m_handle_macd, 0, 1, 2, m_macd_buff_main);
         if(m_symbol_info.Bid() <= t.StopLoss() && t.StopLoss() != 0.0){
             res = SendOrder(m_symbol, ORDER_TYPE_SELL, ORDER_DELETE, t.Ticket(), t.VolumeInitial(),
-                            m_symbol_info.Bid, 0.0, 0.0, "MACD: buy close by stop-loss");)
+                            m_symbol_info.Bid(), 0.0, 0.0, "MACD: buy close by stop-loss");)
         }
         if(m_macd_current < 0 && m_macd_previous >= 0){
             res = SendOrder(m_symbol, ORDER_TYPE_SELL, ORDER_DELETE, t.Ticket(), t.VolumeInitial(),
-                            m_symbol_info.Bid, 0.0, 0.0, "MACD: buy close by signal");
+                            m_symbol_info.Bid(), 0.0, 0.0, "MACD: buy close by signal");
         }
     }
     return (res);

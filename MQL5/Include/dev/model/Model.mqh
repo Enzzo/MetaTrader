@@ -8,6 +8,8 @@
 #include <dev/model/TableOrders.mqh>
 #include <dev/model/Time.mqh>
 
+// test 2
+// test 3
 struct n_orders{
     int all_orders;
     int long_orders;
@@ -32,6 +34,9 @@ enum ENUM_TYPE_DELETED_ORDER{
 
 };
 
+//  --------------------------------------------------------------------------
+//  class mm                                                                 |
+//  --------------------------------------------------------------------------
 class mm{
     CSymbolInfo m_symbol;
 
