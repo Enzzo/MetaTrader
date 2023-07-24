@@ -85,8 +85,8 @@ input double      COMISSION   = 0.0;               // comission
 #define CONTROLS_DIALOG_COLOR_BORDER_DARK   C'0x00,0x00,0x00'
 #define CONTROLS_DIALOG_COLOR_CLIENT_BORDER C'0x00,0x00,0x00'
 
-#include <custom/lot_by_risk_panel.mqh>
-#include <custom/Trade.mqh>
+#include <dev/lot_by_risk_panel.mqh>
+#include <dev/Trade.mqh>
 #include <Trade/SymbolInfo.mqh>
 
 lot_by_risk panel;

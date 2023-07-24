@@ -33,8 +33,27 @@ enum ENUM_TYPE_DELETED_ORDER{
 };
 
 class mm{
+    CSymbolInfo m_symbol;
+
 public:
-    mm(){};
+    mm() {m_symbol.Select(m_symbol.Name(Symbol()));}
+    mm(const string symbol) {m_symbol.Select(m_symbol.Name(symbol));}
+
+    double min_lot() const {
+        return .01;
+    }
+    double jons_fp() const {
+        return .01;
+    }
+    double lot_by_risk(const double r, const int p, const int comission = 0){
+        double l = .0;
+
+        l = NormalizeDouble((AccountInfoDouble(ACCOUNT_BALANCE)/100*r/(comission + p * m_symbol.TickValue())), 2);
+        
+        if(l > SymbolInfoDouble(m_symbol.Name(), SYMBOL_VOLUME_MAX))l = SymbolInfoDouble(m_symbol.Name(), SYMBOL_VOLUME_MAX);
+        if(l < SymbolInfoDouble(m_symbol.Name(), SYMBOL_VOLUME_MIN))l = SymbolInfoDouble(m_symbol.Name(), SYMBOL_VOLUME_MIN);
+        return l;
+    }
 };
 
 class CModel : public CObject{
@@ -139,7 +158,7 @@ bool CModel::SendOrder( string symbol,
                 }
                 
             else{
-                Print(m_trde.ResultComment());
+                Print(m_trade.ResultComment());
             }
             if( m_trade.ResultRetcode() == TRADE_RETCODE_TRADE_DISABLED ||
                 m_trade.ResultRetcode() == TRADE_RETCODE_MARKET_CLOSED ||
