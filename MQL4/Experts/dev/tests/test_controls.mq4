@@ -9,7 +9,7 @@
 #property strict
 #include <Controls/Dialog.mqh>
 
-// notebook
+// notebook 2
 CAppDialog AppWindow;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
