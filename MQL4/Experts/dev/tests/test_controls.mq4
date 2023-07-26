@@ -11,6 +11,7 @@
 
 // notebook 2
 // notebook branch
+// notebook 3
 CAppDialog AppWindow;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
