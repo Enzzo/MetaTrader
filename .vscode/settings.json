@@ -1,6 +1,6 @@
 {
     "C_Cpp.default.includePath": [
-        "d:\\dev\\git\\MetaTrader\\MQL5\\Include",
-        "d:\\dev\\git\\MetaTrader\\MQL4\\Include"
+        "d:\\dev\\MetaTrader\\MQL5\\Include",
+        "d:\\dev\\MetaTrader\\MQL4\\Include"
     ]
 }
