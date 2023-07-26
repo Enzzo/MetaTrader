@@ -9,7 +9,6 @@
 #include <dev/model/Time.mqh>
 
 // test 
-=======
 // test 2
 // test 3
 
