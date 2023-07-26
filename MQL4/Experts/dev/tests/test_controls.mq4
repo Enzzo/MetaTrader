@@ -25,11 +25,7 @@ int OnInit(){
 void OnDeinit(const int reason){
 //---
    AppWindow.Destroy();
-<<<<<<< HEAD
-  }
-=======
 }
->>>>>>> refs/remotes/origin/master
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
