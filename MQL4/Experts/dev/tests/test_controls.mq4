@@ -9,7 +9,6 @@
 #property strict
 #include <Controls/Dialog.mqh>
 
-// home
 CAppDialog AppWindow;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
