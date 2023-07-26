@@ -9,7 +9,7 @@
 #property strict
 #include <Controls/Dialog.mqh>
 
-// notebook 2
+// notebook 
 // notebook branch
 // notebook 311 111
 CAppDialog AppWindow;
