@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                    LotByRisk.mq4 |
+//|                                                    LotByRisk.mq5 |
 //|                                                           Sergey |
 //|                             https://www.mql5.com/ru/users/enzzo/ |
 // version 1.04:
