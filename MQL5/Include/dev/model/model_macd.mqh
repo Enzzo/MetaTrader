@@ -21,7 +21,7 @@ public:
                 cmodel_macd();
     bool        Init();
     bool        Init(cmodel_macd_param& m_param);
-    bool        Int(string symbol, ENUM_TIMEFRAMES timeframe, int slow_ma, int fast_ma, int smothed_ma);
+    bool        Init(string symbol, ENUM_TIMEFRAMES timeframe, int slow_ma, int fast_ma, int smothed_ma);
     bool        Processing();
 
 protected:
@@ -126,7 +126,7 @@ bool cmodel_macd::LongOpened(void){
     m_macd_previous = m_macd_buff_main[1];
     GetNumberOrders(m_orders);
 
-    if(m_macd_current > 0 && m_)macd_prefious <= 0 && m_orders.byu_orders == 0){
+    if(m_macd_current > 0 && m_)macd_previous <= 0 && m_orders.byu_orders == 0){
         lot = open_mm.jons_fp(m_symbol, ORDER_TYPE_BUY, m_symbol_info.Ask(), 0.1, 10000, m_delta);
         result = SendOrder(m_symbol, ORDER_TYPE_BUY, ORDER_ADD, 0, lot, m_symbol_info.Ask(), 0, 0, "MACD buy");
         return (result);
