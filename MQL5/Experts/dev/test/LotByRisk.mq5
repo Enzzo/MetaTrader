@@ -2,6 +2,10 @@
 //|                                                    LotByRisk.mq5 |
 //|                                                           Sergey |
 //|                             https://www.mql5.com/ru/users/enzzo/ |
+
+// version 1.06
+// - Разрядность лота - до сотых
+
 // version 1.05:
 // - Переписал GUI. Теперь панель можно перетаскивать мышкой
 // - Поправил ошибки с комментариями
@@ -49,7 +53,7 @@
 
 #property copyright "Sergey"
 #property link      "https://www.mql5.com/ru/users/enzzo/"
-#property version   "1.00"
+#property version   "1.06"
 
 #property description "The Lot by Risk trading panel is designed for manual trading."
 #property description "This is an alternative means for sending orders."
@@ -68,7 +72,7 @@ input string      HK_TP       = "T";               // hotkey for TP
 input string      HK_SL       = "S";               // hotkey for SL
 input string      HK_PR       = "P";               // hotkey for PRICE
 input int         SLIPPAGE    = 5;                 // slippage
-input double      RISK        = 1.0;               // risk
+input double      RISK        = 1.00;              // risk
 input double      COMISSION   = 0.0;               // comission
 
 #undef CONTROLS_DIALOG_COLOR_BG
@@ -105,7 +109,7 @@ string p_line = pref + "_p_line";
 
 
 int OnInit(){
-   panel.SetRiskDefault(DoubleToString(RISK, 1));
+   panel.SetRiskDefault(DoubleToString(RISK, 2));
    panel.SetCommentDefault(COMMENT);
    panel.SetFooTrade(Trade);
    panel.SetFooClose(CloseAll);
