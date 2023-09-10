@@ -5,13 +5,14 @@ public:
     }
     ~TimeDuration(){
         _end = GetMicrosecondCount();
-        Print("Timer: " + IntegerToString(_end - _start));
-        Print("Start: " + IntegerToString(_start));
-        Print("End: " + IntegerToString(_end));
+       
     }
 private:
     void ShowResult(){
-        
+        ulong duration = _end - _start;
+        Print("Duration: " + IntegerToString(duration));
+        Print("Start: " + IntegerToString(_start));
+        Print("End: " + IntegerToString(_end));
     }
 private:
     ulong _start, _end;
