@@ -5,7 +5,7 @@ public:
     }
     ~TimeDuration(){
         _end = GetMicrosecondCount();
-       
+        ShowResult();
     }
 private:
     void ShowResult(){
