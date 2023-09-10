@@ -1,7 +1,11 @@
 //+------------------------------------------------------------------+
-//|                                                    LotByRisk.mq5 |
+//|                                                    LotByRisk.mq4 |
 //|                                                           Sergey |
 //|                             https://www.mql5.com/ru/users/enzzo/ |
+
+// version 1.06
+// - Разрядность лота - до сотых
+
 // version 1.05:
 // - Переписал GUI. Теперь панель можно перетаскивать мышкой
 // - Поправил ошибки с комментариями
@@ -49,7 +53,7 @@
 
 #property copyright "Sergey"
 #property link      "https://www.mql5.com/ru/users/enzzo/"
-#property version   "1.00"
+#property version   "1.06"
 
 #property description "The Lot by Risk trading panel is designed for manual trading."
 #property description "This is an alternative means for sending orders."
@@ -68,7 +72,7 @@ input string      HK_TP       = "T";               // hotkey for TP
 input string      HK_SL       = "S";               // hotkey for SL
 input string      HK_PR       = "P";               // hotkey for PRICE
 input int         SLIPPAGE    = 5;                 // slippage
-input double      RISK        = 1.0;               // risk
+input double      RISK        = 1.00;              // risk
 input double      COMISSION   = 0.0;               // comission
 
 #undef CONTROLS_DIALOG_COLOR_BG
@@ -87,12 +91,10 @@ input double      COMISSION   = 0.0;               // comission
 
 #include <dev/lot_by_risk_panel.mqh>
 #include <dev/Trade.mqh>
-#include <Trade/SymbolInfo.mqh>
 
 lot_by_risk panel;
 
 CTrade trade;
-CSymbolInfo smb;
 
 #define PANEL_WIDTH  110
 #define PANEL_HEIGHT 108
@@ -105,7 +107,7 @@ string p_line = pref + "_p_line";
 
 
 int OnInit(){
-   panel.SetRiskDefault(DoubleToString(RISK, 1));
+   panel.SetRiskDefault(DoubleToString(RISK, 2));
    panel.SetCommentDefault(COMMENT);
    panel.SetFooTrade(Trade);
    panel.SetFooClose(CloseAll);
@@ -116,9 +118,8 @@ int OnInit(){
    
    panel.Run();
 
-   trade.SetExpertMagicNumber(MAGIC);
+   trade.SetExpertMagic(MAGIC);
    trade.SetExpertComment(COMMENT);
-   smb.Select(smb.Name(Symbol()));
 //---
    return(INIT_SUCCEEDED);
 }
@@ -242,12 +243,6 @@ bool Trade(){
    if(ObjectFind(ChartID(), s_line)!= -1)ObjectDelete(ChartID(), s_line);
    if(ObjectFind(ChartID(), p_line)!= -1)ObjectDelete(ChartID(), p_line);
 
-    MqlTick tick;
-    SymbolInfoTick(Symbol(), tick);
-
-    double Ask = tick.ask;
-    double Bid = tick.bid;
-
    //Рассчитаем количество пунктов до стоплосса
    if(sl != 0.0){
       //Если цена не задана и ордер будет рыночным, то
@@ -273,16 +268,16 @@ bool Trade(){
       //РИСКА НЕТ
       //3)
       if(sl == 0.0){
-         if(tp > Ask) return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
-         if(tp < Bid) return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
+         if(tp > Ask) return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+         if(tp < Bid) return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
          return Wrong("take profit can't be inside the spread");
       }
       
       //РИСК ЕСТЬ
       //4)
       if(tp == 0.0){
-         if(sl < Bid) return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
-         if(sl > Ask) return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
+         if(sl < Bid) return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+         if(sl > Ask) return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
          return Wrong("stop loss can't be inside the spread");
       }
       
@@ -293,8 +288,8 @@ bool Trade(){
       if(tp < Bid && sl < Bid){
          return Wrong("take profit and stop loss below the opening price");
       }
-      if(tp > Ask && sl < Bid) return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
-      if(tp < Bid && sl > Ask) return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
+      if(tp > Ask && sl < Bid) return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+      if(tp < Bid && sl > Ask) return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
       return Wrong("7 E");
    }
    //(5, 6, 8)
@@ -307,12 +302,12 @@ bool Trade(){
             if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
             if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
             
-            if(pr == Ask)return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
+            if(pr == Ask)return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
          }
          if(tp < pr){
             if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
             if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-            if(pr == Bid)return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
+            if(pr == Bid)return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
          }
          //5 D
          return Wrong("take profit cannot be equal to the opening price");         
@@ -324,12 +319,12 @@ bool Trade(){
          if(sl < pr){
             if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
             if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-            if(pr == Ask)return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
+            if(pr == Ask)return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
          }
          if(sl > pr){
             if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
             if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-            if(pr == Bid)return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
+            if(pr == Bid)return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
          }
          //6 D
          return Wrong("stop loss cannot be equal to the opening price");
@@ -342,12 +337,12 @@ bool Trade(){
       if(tp > pr){
          if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
          if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-                     return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
+                     return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
       }
       if(tp < pr){
          if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
          if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-                     return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, cmnt);
+                     return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
       }
    }  
 
@@ -369,13 +364,12 @@ bool Wrong(const string msg){
 //+------------------------------------------------------------------+
 //r - риск %, p - пункты до стоплосса
 double AutoLot(const double r, const int p){
-   // double l = MarketInfo(Symbol(), MODE_MINLOT);
-   double l = .0;
-
-   l = NormalizeDouble((AccountInfoDouble(ACCOUNT_BALANCE)/100*r/(COMISSION + p*smb.TickValue())), 2);
+   double l = MarketInfo(Symbol(), MODE_MINLOT);
    
-   if(l > SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_MAX))l = SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_MAX);
-   if(l < SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_MIN))l = SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_MIN);
+   l = NormalizeDouble((AccountBalance()/100*r/(COMISSION + p*MarketInfo(Symbol(), MODE_TICKVALUE))), 2);
+   
+   if(l > MarketInfo(Symbol(), MODE_MAXLOT))l = MarketInfo(Symbol(), MODE_MAXLOT);
+   if(l < MarketInfo(Symbol(), MODE_MINLOT))l = MarketInfo(Symbol(), MODE_MINLOT);
    return l;
 }
 //+------------------------------------------------------------------+
@@ -417,6 +411,5 @@ bool HLineCreate(const string          name="HLine",      // имя линии
 }
 //+------------------------------------------------------------------+
 bool LineMove(const string name, const double price){
-   ChartRedraw();
    return ObjectMove(0,name,0,0,price);
 }

@@ -6,8 +6,6 @@
 
 typedef bool (*CallBack)();
 
-void test(){};
-
 class lot_by_risk : public CAppDialog{
 private:
     string prefix_, comment_text_, risk_text_;
@@ -142,7 +140,7 @@ bool lot_by_risk::ButtonCloseCreate(){
 double lot_by_risk::GetRisk() const {
     string sr = ed_risk_.Text();
     StringReplace(sr, ",", ".");
-    return NormalizeDouble(StringToDouble(sr), 1);
+    return NormalizeDouble(StringToDouble(sr), 2);
 }
 
 string lot_by_risk::GetComment() const{
