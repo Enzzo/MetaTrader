@@ -1,6 +1,6 @@
 #include <Object.mqh>
 
-class model : CObject{
+class model : public CObject{
 public:
     model(){};
    ~model(){};

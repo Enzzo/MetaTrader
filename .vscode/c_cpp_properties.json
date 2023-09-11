@@ -4,8 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "D:/dev/metatrader/MQL4/Include",
-                "D:/dev/metatrader/MQL5/Include"
+                "D:/dev/git/metatrader/MQL4/Include",
+                "D:/dev/git/metatrader/MQL5/Include"
             ],
             "defines": [
                 "_DEBUG",
