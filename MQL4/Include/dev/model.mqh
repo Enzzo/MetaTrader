@@ -6,4 +6,6 @@ public:
    ~model(){};
 
    virtual void proccessing() = 0;
+
+protected:
 };
