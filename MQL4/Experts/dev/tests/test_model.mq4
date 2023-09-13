@@ -7,7 +7,6 @@
 #include <dev/model_single_ma.mqh>
 #include <dev/model_buruz_rsi.mqh>
 #include <dev/model_rsi.mqh>
-
 #include <Arrays/List.mqh>
 
 #define DEBUG
@@ -27,8 +26,7 @@ single_ma_inps smi = {PERIOD_M1, 0, MODE_EMA, PRICE_CLOSE};
 CList* list = new CList();
 
 int OnInit(){
-
-    b_inps.magic = 222;
+    b_inps.magic = Magic;
     b_inps.rsi_period = RSI_Period;
     b_inps.overbought_level = Overbought_Level;
     b_inps.oversold_level = Oversold_Level;

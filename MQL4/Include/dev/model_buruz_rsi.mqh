@@ -1,3 +1,5 @@
+//###<Experts/dev/tests/test_model.mq4>
+#include <dev\mm.mqh>
 #include <dev\model.mqh>
 #include <dev\trade.mqh>
 
@@ -25,10 +27,14 @@ public:
     {
         _last_rsi = iRSI(_symbol, 0, _rsi_period, PRICE_CLOSE, 0);
         _trade = new CTrade();
+        _mm = new mm(_symbol);
     };
     ~model_buruz_rsi(){
         if(CheckPointer(_trade)){
             delete (_trade);
+        }
+        if(CheckPointer(_mm)){
+            delete (_mm);
         }
     }
     virtual void proccessing() override{
@@ -65,4 +71,5 @@ private:
     const string _symbol;
 
     CTrade* _trade;
+    mm* _mm;
 };
