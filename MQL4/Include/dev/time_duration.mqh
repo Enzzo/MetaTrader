@@ -37,3 +37,4 @@ const string TimeDuration::FormatDuration(ulong duration)const{
     }
 
 #define TIMER TimeDuration timer##__LINE__(__FUNCTION__);
+#define TIMER_HINT(hint) TimeDuration timer##__LINE__(hint);
