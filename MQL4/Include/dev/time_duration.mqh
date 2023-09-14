@@ -17,7 +17,7 @@ TimeDuration::~TimeDuration(){
 }
 
 void TimeDuration::ShowResult() const{
-    Print(_fn_name+"() elapsed: " + FormatDuration(_end - _start));
+    Print(_fn_name+" elapsed: " + FormatDuration(_end - _start));
 }
 
 const string TimeDuration::FormatDuration(ulong duration)const{
