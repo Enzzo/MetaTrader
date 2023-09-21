@@ -91,10 +91,12 @@ input double      COMISSION   = 0.0;               // comission
 
 #include <dev/lot_by_risk_panel.mqh>
 #include <dev/Trade.mqh>
+#include <dev/mm.mqh>
 
 lot_by_risk panel;
 
 CTrade trade;
+money_management mgmt();
 
 #define PANEL_WIDTH  110
 #define PANEL_HEIGHT 108

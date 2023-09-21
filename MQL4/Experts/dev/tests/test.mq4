@@ -2,14 +2,20 @@
 #property link "http://mql5.com/enzzo"
 #property version "1.00"
 
-struct test{
-    int a;
-}t;
-t.a = 20;
+class some_class{
+public:
+   some_class() 
+      : _ptr(new int(1)){};
+      
+  ~some_class();
+   
+private:
+   int* _ptr;
+};
 
 int OnInit(){
-   t.a = 10;
-    return INIT_SUCCEEDED;
+   some_class sc;
+   return INIT_SUCCEEDED;
 }
 
 void OnTick(){

@@ -31,7 +31,7 @@
 //| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the     |
 //| GNU General Public License for more details.                     |
 //+------------------------------------------------------------------+
-#include "alglib.mqh"
+#include <Math\Alglib\alglib.mqh>
 
 //+------------------------------------------------------------------+
 //| Derived class from CNDimensional_Func                            |
