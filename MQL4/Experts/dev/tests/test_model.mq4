@@ -2,12 +2,13 @@
 #property link      "https://www.mql5.com"
 #property version   "1.00"
 
+#include <Arrays/List.mqh>
+
 #include <dev/time_duration.mqh>
 
 #include <dev/model_single_ma.mqh>
 #include <dev/model_buruz_rsi.mqh>
 #include <dev/model_rsi.mqh>
-#include <Arrays/List.mqh>
 
 #define DEBUG
 
@@ -25,6 +26,10 @@ single_ma_inps smi = {PERIOD_M1, 0, MODE_EMA, PRICE_CLOSE};
 
 CList* list = new CList();
 
+
+// +--------------------------------------+
+// |              int OnInit              |
+// +--------------------------------------+
 int OnInit(){
     b_inps.magic = Magic;
     b_inps.rsi_period = RSI_Period;
@@ -38,21 +43,24 @@ int OnInit(){
     model* rsi = new model_rsi("rsi");
     model* brsi = new model_buruz_rsi(b_inps);
 
-    if(CheckPointer(ma)){
+    if(CheckPointer(ma) == POINTER_DYNAMIC){
         list.Add(ma);
     }
 
-    if(CheckPointer(rsi)){
+    if(CheckPointer(rsi) == POINTER_DYNAMIC){
         list.Add(rsi);
     }
 
-    if(CheckPointer(brsi)){
+    if(CheckPointer(brsi) == POINTER_DYNAMIC){
         list.Add(brsi);
     }
 
     return (INIT_SUCCEEDED);
 }
 
+// +--------------------------------------+
+// |              void OnTick             |
+// +--------------------------------------+
 void OnTick(){
     #ifdef DEBUG
       TIMER;
@@ -60,12 +68,15 @@ void OnTick(){
     
     for(int i = 0; i < list.Total(); ++i){
         model* m = list.GetNodeAtIndex(i);
-        if(CheckPointer(m)){
+        if(CheckPointer(m) == POINTER_DYNAMIC){
             m.proccessing();
         }
     }
 }
 
+// +--------------------------------------+
+// |              void OnDeinit           |
+// +--------------------------------------+
 void OnDeinit(const int reason){
     list.Clear();
     delete (list);

@@ -1,11 +1,14 @@
 #include <Object.mqh>
 
+// +--------------------------------------+
+// |              class model             |
+// +--------------------------------------+
 class model : public CObject{
 public:
-    model(){};
-   ~model(){};
+   virtual ~model(){};
 
    virtual void proccessing() = 0;
 
 protected:
+   model(){};
 };

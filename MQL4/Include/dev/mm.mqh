@@ -1,21 +1,22 @@
 #include <dev\SymbolInfo.mqh>
 
-//----------------------------------------------------------+
-//              class money_management                      |
-//----------------------------------------------------------+
-class money_management{
+// +--------------------------------------------------------+
+// |                        class mm                        |
+// +--------------------------------------------------------+
+//
+class mm{
 public:
-    money_management()
+    mm()
       : _symbol(){
          _symbol.Name(Symbol());
       }
     ;
-    money_management(const string symbol)
+    mm(const string symbol)
       : _symbol(){
       _symbol.Name(symbol);
     }
     
-   ~money_management(){}; 
+   ~mm(){}; 
 
     const double min_lot() const;
     const double max_lot() const;
@@ -26,30 +27,30 @@ private:
 };
 
 //----------------------------------------------------------+
-//              class money_management                      |
+//                         class mm                         |
 //----------------------------------------------------------+
-//                      min_lot                             |
+//                         min_lot                          |
 //----------------------------------------------------------+
-const double money_management::min_lot(void)const{
+const double mm::min_lot(void)const{
    return _symbol.LotsMin();
 }
 
 //----------------------------------------------------------+
-//              class money_management                      |
+//                         class mm                         |
 //----------------------------------------------------------+
-//                      max_lot                             |
+//                         max_lot                          |
 //----------------------------------------------------------+
-const double money_management::max_lot(void)const{
+const double mm::max_lot(void)const{
    return _symbol.LotsMax();
 }
 
 //----------------------------------------------------------+
-//              class money_management                      |
+//                         class mm                         |
 //----------------------------------------------------------+
-//                      auto_lot                            |
+//                         auto_lot                         |
 //----------------------------------------------------------+
-const double money_management::auto_lot(double risk,int points,double comission = 0.0)const{
-   double lot = NormalizeDouble((AccountInfoDouble(ACCOUNT_BALANCE)/100*risk/(comission + points*_symbol.TickValue())), 2);;
+const double mm::auto_lot(double risk,int points,double comission = 0.0)const{
+   double lot = NormalizeDouble((AccountInfoDouble(ACCOUNT_BALANCE)*.01*risk/(comission + points*_symbol.TickValue())), 2);;
    
    if(lot > _symbol.LotsMax()){
       lot = _symbol.LotsMax();

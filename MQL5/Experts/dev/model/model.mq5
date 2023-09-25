@@ -6,6 +6,9 @@
 #include <dev/model/model.mqh>
 #include <Arrays/List.mqh>
 
+//  +-----------------------------------------------+
+//  |               class cmodel_macd               |
+//  +-----------------------------------------------+
 class cmodel_macd : public CModel{
 public:
     cmodel_macd(){m_name = "MACD model";}

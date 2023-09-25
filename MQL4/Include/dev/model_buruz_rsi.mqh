@@ -1,8 +1,10 @@
-//###<Experts/dev/tests/test_model.mq4>
 #include <dev\mm.mqh>
 #include <dev\model.mqh>
 #include <dev\trade.mqh>
 
+// +--------------------------------------+
+// |          struct buruz_inps           |
+// +--------------------------------------+
 struct buruz_inps{
     int magic;
     int rsi_period;
@@ -13,6 +15,9 @@ struct buruz_inps{
     double lot_size;
 }b_inps;
 
+// +--------------------------------------+
+// |       class model_buruz_rsi          |
+// +--------------------------------------+
 class model_buruz_rsi : public model{
 public:    
     model_buruz_rsi(const buruz_inps& inp) : 
@@ -30,10 +35,10 @@ public:
         _mm = new mm(_symbol);
     };
     ~model_buruz_rsi(){
-        if(CheckPointer(_trade)){
+        if(CheckPointer(_trade) == POINTER_DYNAMIC){
             delete (_trade);
         }
-        if(CheckPointer(_mm)){
+        if(CheckPointer(_mm) == POINTER_DYNAMIC){
             delete (_mm);
         }
     }
