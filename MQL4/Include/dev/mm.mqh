@@ -23,6 +23,9 @@ public:
     const double auto_lot(double risk, int points, double comission = 0.0) const;
 
 private:
+   short get_lot_digits() const;
+   
+private:
    CSymbolInfo _symbol;
 };
 
@@ -60,13 +63,16 @@ const double mm::auto_lot(double risk,int points,double comission = 0.0)const{
    }
    return lot;
 }
-/*
-double AutoLot(const double r, const int p){
-   double l = MarketInfo(Symbol(), MODE_MINLOT);
+
+
+short mm::get_lot_digits() const{
+   double step = SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_STEP);
+   short d = 0;
+
+   while(step < 1.0){
+      ++d;
+      step *= 10;
+   }
    
-   l = NormalizeDouble((AccountBalance()/100*r/(COMISSION + p*MarketInfo(Symbol(), MODE_TICKVALUE))), 2);
-   
-   if(l > MarketInfo(Symbol(), MODE_MAXLOT))l = MarketInfo(Symbol(), MODE_MAXLOT);
-   if(l < MarketInfo(Symbol(), MODE_MINLOT))l = MarketInfo(Symbol(), MODE_MINLOT);
-   return l;
-}*/
+   return d;
+}

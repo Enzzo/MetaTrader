@@ -376,7 +376,7 @@ double AutoLot(const double r, const int p){
    // double l = MarketInfo(Symbol(), MODE_MINLOT);
    double l = .0;
 
-   l = NormalizeDouble((AccountInfoDouble(ACCOUNT_BALANCE)/100*r/(COMISSION + p*smb.TickValue())), 2);
+   l = NormalizeDouble((AccountInfoDouble(ACCOUNT_BALANCE)/100*r/(COMISSION + p*smb.TickValue())), get_lot_digits());
    
    if(l > SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_MAX))l = SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_MAX);
    if(l < SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_MIN))l = SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_MIN);
@@ -429,4 +429,16 @@ bool LineMove(const string name, const double price){
    ChartRedraw();
    bool result = ObjectMove(0,name,0,0,price) && ObjectMove(0, name+"Label", 0, 0, price);
    return result;
+}
+
+short get_lot_digits(){
+   double step = SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_STEP);
+   short d = 0;
+
+   while(step < 1.0){
+      ++d;
+      step *= 10;
+   }
+   
+   return d;
 }
