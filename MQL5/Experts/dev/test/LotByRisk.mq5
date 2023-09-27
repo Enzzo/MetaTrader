@@ -3,8 +3,12 @@
 //|                                                           Sergey |
 //|                             https://www.mql5.com/ru/users/enzzo/ |
 
+// version 1.07
+// - Поправил баг с лотами. Теперь лот высчитывается с учётом минимального шага лота
+// - Добавил возможность изменять цвет линий
+
 // version 1.06
-// - Разрядность лота - до сотых
+// - Разрядность риска - до сотых
 
 // version 1.05:
 // - Переписал GUI. Теперь панель можно перетаскивать мышкой
@@ -53,7 +57,7 @@
 
 #property copyright "Sergey"
 #property link      "https://www.mql5.com/ru/users/enzzo/"
-#property version   "1.06"
+#property version   "1.07"
 
 #property description "The Lot by Risk trading panel is designed for manual trading."
 #property description "This is an alternative means for sending orders."
@@ -71,6 +75,9 @@ input int         Y_OFFSET    = 20;                // Y - offset
 input string      HK_TP       = "T";               // hotkey for TP
 input string      HK_SL       = "S";               // hotkey for SL
 input string      HK_PR       = "P";               // hotkey for PRICE
+input color       L_TP        = clrGreen;        // take profit line color
+input color       L_SL        = clrRed;          // stop loss line color
+input color       L_PR        = clrOrange;       // price open line color
 input int         SLIPPAGE    = 5;                 // slippage
 input double      RISK        = 1.00;              // risk
 input double      COMISSION   = 0.0;               // comission
@@ -156,19 +163,19 @@ void OnChartEvent(const int id,         // идентификатор событ
          string n = t_line;
          t_move = true;s_move = false; p_move = false; 
          if(ObjectFind(ChartID(), n) != -1) ObjectDelete(ChartID(), n);
-         else HLineCreate(n, price, clrGreen, "take profit");
+         else HLineCreate(n, price, L_TP, "take profit");
       }
       else if(lparam == StringToToken(HK_SL)){
          string n = s_line;
          t_move = false;s_move = true;p_move = false;
          if(ObjectFind(ChartID(), n) != -1) ObjectDelete(ChartID(), n);
-         else HLineCreate(n, price, clrRed ,"stop loss");
+         else HLineCreate(n, price, L_SL,"stop loss");
       }
       else if(lparam == StringToToken(HK_PR)){
          string n = p_line;
          t_move = false;s_move = false;p_move = true;
          if(ObjectFind(ChartID(), n) != -1) ObjectDelete(ChartID(), n);
-         else HLineCreate(n, price, clrOrange, "price open");
+         else HLineCreate(n, price, L_PR, "price open");
       }      
    }
    if(id == CHARTEVENT_MOUSE_MOVE){            
@@ -374,7 +381,7 @@ bool Wrong(const string msg){
 //r - риск %, p - пункты до стоплосса
 double AutoLot(const double r, const int p){
    // double l = MarketInfo(Symbol(), MODE_MINLOT);
-   double l = .0;
+   double l = EMPTY_VALUE;
 
    l = NormalizeDouble((AccountInfoDouble(ACCOUNT_BALANCE)/100*r/(COMISSION + p*smb.TickValue())), get_lot_digits());
    

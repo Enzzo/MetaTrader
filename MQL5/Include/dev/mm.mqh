@@ -9,19 +9,23 @@
 #include <Trade\SymbolInfo.mqh>
 #include <Trade\AccountInfo.mqh>
 #include <Trade\PositionInfo.mqh>
-class mm
-{
-private:
-   double            m_current_price;
-   double            m_sl;
-   CSymbolInfo       m_symbol_info;
-   CAccountInfo      m_account_info;
-   CPositionInfo     m_position_info; 
+
+// +--------------------------------------------------------+
+// |                        class mm                        |
+// +--------------------------------------------------------+
+class mm{
 public:
    double            optimal_f(string symbol, ENUM_ORDER_TYPE op_type, double open_price, double stop_loss, double f);
    double            jons_fp(string symbol, ENUM_ORDER_TYPE op_type, double open_price, double min_lot, double begin_balance,  double delta);
    double            CheckLot(string symbol, double lot, ENUM_ORDER_TYPE op_type);
    double            CheckMargin(string symbol, ENUM_ORDER_TYPE op_type, double lot, double open_price);
+
+private:
+   double            _current_price;
+   double            _sl;
+   CSymbolInfo       _symbol_info;
+   CAccountInfo      _account_info;
+   CPositionInfo     _position_info;
 
 };
 
@@ -43,28 +47,28 @@ double mm::optimal_f(string symbol, ENUM_ORDER_TYPE op_type, double open_price, 
    //double lot_limit;
    //double lot_margin;
    
-   m_symbol_info.Name(symbol);
-   m_symbol_info.RefreshRates();
+   _symbol_info.Name(symbol);
+   _symbol_info.RefreshRates();
    if(op_type==ORDER_TYPE_BUY_LIMIT||op_type==ORDER_TYPE_BUY_STOP||
       op_type==ORDER_TYPE_BUY_STOP_LIMIT||op_type==ORDER_TYPE_BUY){
-      m_current_price=m_symbol_info.Ask();  
+      _current_price=_symbol_info.Ask();  
    }
    if(op_type==ORDER_TYPE_SELL_LIMIT||op_type==ORDER_TYPE_SELL_STOP||
       op_type==ORDER_TYPE_SELL_STOP_LIMIT||op_type==ORDER_TYPE_SELL){
-      m_current_price=m_symbol_info.Bid();
+      _current_price=_symbol_info.Bid();
    }
    
    if((stop_loss<=0.0)||(f>1.0)||(f<=0.0)){
       lot=0.1;
    }
    else{
-      tick_value=m_symbol_info.TickValue();
-      point=MathAbs(open_price - stop_loss)/m_symbol_info.Point();
-      min_risk=point*tick_value*m_symbol_info.LotsStep();
-      min_risk_percent=min_risk/m_account_info.Balance();
+      tick_value=_symbol_info.TickValue();
+      point=MathAbs(open_price - stop_loss)/_symbol_info.Point();
+      min_risk=point*tick_value*_symbol_info.LotsStep();
+      min_risk_percent=min_risk/_account_info.Balance();
       lot_step=MathFloor(f/min_risk_percent);
-      lot=lot_step*m_symbol_info.LotsStep();
-      if(lot<m_symbol_info.LotsMin())lot=m_symbol_info.LotsMin();
+      lot=lot_step*_symbol_info.LotsStep();
+      if(lot<_symbol_info.LotsMin())lot=_symbol_info.LotsMin();
 
    }
    lot=CheckLot(symbol, lot, op_type);
@@ -77,11 +81,11 @@ double mm::jons_fp(string symbol,ENUM_ORDER_TYPE op_type,double open_price, doub
    double current_profit;
    double d, x;
    double lot;
-   m_symbol_info.Name(symbol);
-   m_symbol_info.RefreshRates();
+   _symbol_info.Name(symbol);
+   _symbol_info.RefreshRates();
    //_balance=11375.03;
    if(delta>0){
-      current_profit=m_account_info.Balance()-begin_balance;
+      current_profit=_account_info.Balance()-begin_balance;
       if(current_profit<=0)lot=min_lot;
       else{
          d=(current_profit/(delta));
@@ -90,7 +94,7 @@ double mm::jons_fp(string symbol,ENUM_ORDER_TYPE op_type,double open_price, doub
          x=MathFloor(x);
          if(x==0.0)lot=min_lot;
          else{
-            lot=min_lot+((x-1)*m_symbol_info.LotsStep());//!!! Not Change !!!
+            lot=min_lot+((x-1)*_symbol_info.LotsStep());//!!! Not Change !!!
          }
       }
    }
@@ -100,6 +104,11 @@ double mm::jons_fp(string symbol,ENUM_ORDER_TYPE op_type,double open_price, doub
    return(lot);
 }
 
+// +----------------------------------------------------------+
+// |                        class mm                          |
+// +----------------------------------------------------------+
+// |                     double CheckLot                      |
+// +----------------------------------------------------------+
 double mm::CheckLot(string symbol, double lot, ENUM_ORDER_TYPE op_type)
 {
    ENUM_POSITION_TYPE position_type;
@@ -107,10 +116,11 @@ double mm::CheckLot(string symbol, double lot, ENUM_ORDER_TYPE op_type)
    double             position_limit;
    double             lot_limit;
    if(lot==EMPTY_VALUE)return(EMPTY_VALUE);
-   m_position_info.Select(symbol);
-   position_type=(ENUM_POSITION_TYPE)m_position_info.Type();
-   if(m_position_info.Select(symbol))
-      position_volume=m_position_info.Volume();
+
+   _position_info.Select(symbol);
+   position_type=(ENUM_POSITION_TYPE)_position_info.Type();
+   if(_position_info.Select(symbol))
+      position_volume=_position_info.Volume();
    else position_volume=0.0;
    position_limit=SymbolInfoDouble(Symbol(),SYMBOL_VOLUME_LIMIT);
    if(position_limit!=0.0){
@@ -136,11 +146,15 @@ double mm::CheckLot(string symbol, double lot, ENUM_ORDER_TYPE op_type)
    return(lot);
 }
 
-double mm::CheckMargin(string symbol, ENUM_ORDER_TYPE op_type, double lot, double open_price)
-{
-   string my_currency = m_account_info.Currency();
-   double demanded_margin=m_account_info.MarginCheck(symbol, op_type, lot, open_price); 
-   double free_margin=m_account_info.FreeMargin();
+//----------------------------------------------------------+
+//                         class mm                         |
+//----------------------------------------------------------+
+//                    double CheckMargin                    |
+//----------------------------------------------------------+
+double mm::CheckMargin(string symbol, ENUM_ORDER_TYPE op_type, double lot, double open_price){
+   string my_currency = _account_info.Currency();
+   double demanded_margin=_account_info.MarginCheck(symbol, op_type, lot, open_price); 
+   double free_margin=_account_info.FreeMargin();
    double delta, current_lot;
    if(lot==EMPTY_VALUE)return(EMPTY_VALUE);
    if(demanded_margin==EMPTY_VALUE){
@@ -156,13 +170,13 @@ double mm::CheckMargin(string symbol, ENUM_ORDER_TYPE op_type, double lot, doubl
          "). Demanded margin is ", NormalizeDouble(demanded_margin, 1), ". I try to lower volume ", lot, ".");
       delta=demanded_margin/free_margin;
       current_lot=lot/delta;
-      if(current_lot<m_symbol_info.LotsMin()){
+      if(current_lot<_symbol_info.LotsMin()){
          Print("It is not enough free margin for open minimum lot. Skip signal");
-         if(m_account_info.Margin()==0.0)
+         if(_account_info.Margin()==0.0)
             Print("Margin not using. Technicals margin-call");
          return(EMPTY_VALUE);
       }
-      lot=NormalizeDouble(current_lot-m_symbol_info.LotsMin(), 1);
+      lot=NormalizeDouble(current_lot-_symbol_info.LotsMin(), 1);
    }
    return(lot);
 }

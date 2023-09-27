@@ -53,7 +53,7 @@ const double mm::max_lot(void)const{
 //                         auto_lot                         |
 //----------------------------------------------------------+
 const double mm::auto_lot(double risk,int points,double comission = 0.0)const{
-   double lot = NormalizeDouble((AccountInfoDouble(ACCOUNT_BALANCE)*.01*risk/(comission + points*_symbol.TickValue())), 2);;
+   double lot = NormalizeDouble((AccountInfoDouble(ACCOUNT_BALANCE)*.01*risk/(comission + points*_symbol.TickValue())), get_lot_digits());;
    
    if(lot > _symbol.LotsMax()){
       lot = _symbol.LotsMax();
@@ -64,7 +64,11 @@ const double mm::auto_lot(double risk,int points,double comission = 0.0)const{
    return lot;
 }
 
-
+//----------------------------------------------------------+
+//                         class mm                         |
+//----------------------------------------------------------+
+//                  short get_lot_digits                    |
+//----------------------------------------------------------+
 short mm::get_lot_digits() const{
    double step = SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_STEP);
    short d = 0;

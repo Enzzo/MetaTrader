@@ -3,8 +3,12 @@
 //|                                                           Sergey |
 //|                             https://www.mql5.com/ru/users/enzzo/ |
 
+// version 1.07
+// - Поправил баг с лотами. Теперь лот высчитывается с учётом минимального шага лота
+// - Добавил возможность изменять цвет линий
+
 // version 1.06
-// - Разрядность лота - до сотых
+// - Разрядность риска - до сотых
 
 // version 1.05:
 // - Переписал GUI. Теперь панель можно перетаскивать мышкой
@@ -53,7 +57,7 @@
 
 #property copyright "Sergey"
 #property link      "https://www.mql5.com/ru/users/enzzo/"
-#property version   "1.06"
+#property version   "1.07"
 
 #property description "The Lot by Risk trading panel is designed for manual trading."
 #property description "This is an alternative means for sending orders."
@@ -71,6 +75,9 @@ input int         Y_OFFSET    = 20;                // Y - offset
 input string      HK_TP       = "T";               // hotkey for TP
 input string      HK_SL       = "S";               // hotkey for SL
 input string      HK_PR       = "P";               // hotkey for PRICE
+input color       L_TP        = clrGreen;        // take profit line color
+input color       L_SL        = clrRed;          // stop loss line color
+input color       L_PR        = clrOrange;       // price open line color
 input int         SLIPPAGE    = 5;                 // slippage
 input double      RISK        = 1.00;              // risk
 input double      COMISSION   = 0.0;               // comission
@@ -96,7 +103,7 @@ input double      COMISSION   = 0.0;               // comission
 lot_by_risk panel;
 
 CTrade trade;
-money_management mgmt();
+mm mgmt();
 
 #define PANEL_WIDTH  110
 #define PANEL_HEIGHT 108
@@ -155,19 +162,19 @@ void OnChartEvent(const int id,         // идентификатор событ
          string n = t_line;
          t_move = true;s_move = false; p_move = false; 
          if(ObjectFind(ChartID(), n) != -1) ObjectDelete(ChartID(), n);
-         else HLineCreate(n, price, clrGreen, "take profit");
+         else HLineCreate(n, price, L_TP, "take profit");
       }
       else if(lparam == StringToToken(HK_SL)){
          string n = s_line;
          t_move = false;s_move = true;p_move = false;
          if(ObjectFind(ChartID(), n) != -1) ObjectDelete(ChartID(), n);
-         else HLineCreate(n, price, clrRed ,"stop loss");
+         else HLineCreate(n, price, L_SL ,"stop loss");
       }
       else if(lparam == StringToToken(HK_PR)){
          string n = p_line;
          t_move = false;s_move = false;p_move = true;
          if(ObjectFind(ChartID(), n) != -1) ObjectDelete(ChartID(), n);
-         else HLineCreate(n, price, clrOrange, "price open");
+         else HLineCreate(n, price, L_PR, "price open");
       }      
    }
    if(id == CHARTEVENT_MOUSE_MOVE){            
@@ -270,16 +277,16 @@ bool Trade(){
       //РИСКА НЕТ
       //3)
       if(sl == 0.0){
-         if(tp > Ask) return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
-         if(tp < Bid) return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+         if(tp > Ask) return trade.Buy(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
+         if(tp < Bid) return trade.Sell(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
          return Wrong("take profit can't be inside the spread");
       }
       
       //РИСК ЕСТЬ
       //4)
       if(tp == 0.0){
-         if(sl < Bid) return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
-         if(sl > Ask) return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+         if(sl < Bid) return trade.Buy(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
+         if(sl > Ask) return trade.Sell(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
          return Wrong("stop loss can't be inside the spread");
       }
       
@@ -290,8 +297,8 @@ bool Trade(){
       if(tp < Bid && sl < Bid){
          return Wrong("take profit and stop loss below the opening price");
       }
-      if(tp > Ask && sl < Bid) return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
-      if(tp < Bid && sl > Ask) return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+      if(tp > Ask && sl < Bid) return trade.Buy(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
+      if(tp < Bid && sl > Ask) return trade.Sell(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
       return Wrong("7 E");
    }
    //(5, 6, 8)
@@ -301,15 +308,15 @@ bool Trade(){
       //5
       if(sl == 0.0){
          if(tp > pr){
-            if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-            if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
+            if(pr > Ask)return trade.BuyStop(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+            if(pr < Ask)return trade.BuyLimit(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
             
-            if(pr == Ask)return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+            if(pr == Ask)return trade.Buy(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
          }
          if(tp < pr){
-            if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-            if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-            if(pr == Bid)return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+            if(pr < Bid)return trade.SellStop(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+            if(pr > Bid)return trade.SellLimit(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+            if(pr == Bid)return trade.Sell(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
          }
          //5 D
          return Wrong("take profit cannot be equal to the opening price");         
@@ -319,14 +326,14 @@ bool Trade(){
       //6
       if(tp == 0.0){
          if(sl < pr){
-            if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-            if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-            if(pr == Ask)return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+            if(pr > Ask)return trade.BuyStop(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+            if(pr < Ask)return trade.BuyLimit(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+            if(pr == Ask)return trade.Buy(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
          }
          if(sl > pr){
-            if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-            if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-            if(pr == Bid)return trade.Sell(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+            if(pr < Bid)return trade.SellStop(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+            if(pr > Bid)return trade.SellLimit(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+            if(pr == Bid)return trade.Sell(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
          }
          //6 D
          return Wrong("stop loss cannot be equal to the opening price");
@@ -337,14 +344,14 @@ bool Trade(){
       if(tp > pr && sl > pr)return Wrong("take profit and stop loss above the opening price");
       if(tp < pr && sl < pr)return Wrong("take profit and stop loss below the opening price");
       if(tp > pr){
-         if(pr > Ask)return trade.BuyStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-         if(pr < Ask)return trade.BuyLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-                     return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+         if(pr > Ask)return trade.BuyStop(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+         if(pr < Ask)return trade.BuyLimit(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+                     return trade.Buy(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
       }
       if(tp < pr){
-         if(pr > Bid)return trade.SellLimit(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-         if(pr < Bid)return trade.SellStop(Symbol(), AutoLot(risk, pts), pr, sl, tp, 0, cmnt);
-                     return trade.Buy(Symbol(), AutoLot(risk, pts), sl, tp, SLIPPAGE, cmnt);
+         if(pr > Bid)return trade.SellLimit(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+         if(pr < Bid)return trade.SellStop(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), pr, sl, tp, 0, cmnt);
+                     return trade.Buy(Symbol(), mgmt.auto_lot(risk, pts, COMISSION), sl, tp, SLIPPAGE, cmnt);
       }
    }  
 
@@ -365,15 +372,15 @@ bool Wrong(const string msg){
 
 //+------------------------------------------------------------------+
 //r - риск %, p - пункты до стоплосса
-double AutoLot(const double r, const int p){
-   double l = MarketInfo(Symbol(), MODE_MINLOT);
+// double AutoLot(const double r, const int p){
+//    double l = MarketInfo(Symbol(), MODE_MINLOT);
    
-   l = NormalizeDouble((AccountBalance()/100*r/(COMISSION + p*MarketInfo(Symbol(), MODE_TICKVALUE))), 2);
+//    l = NormalizeDouble((AccountBalance()/100*r/(COMISSION + p*MarketInfo(Symbol(), MODE_TICKVALUE))), 2);
    
-   if(l > MarketInfo(Symbol(), MODE_MAXLOT))l = MarketInfo(Symbol(), MODE_MAXLOT);
-   if(l < MarketInfo(Symbol(), MODE_MINLOT))l = MarketInfo(Symbol(), MODE_MINLOT);
-   return l;
-}
+//    if(l > MarketInfo(Symbol(), MODE_MAXLOT))l = MarketInfo(Symbol(), MODE_MAXLOT);
+//    if(l < MarketInfo(Symbol(), MODE_MINLOT))l = MarketInfo(Symbol(), MODE_MINLOT);
+//    return l;
+// }
 //+------------------------------------------------------------------+
 bool HLineCreate(const string          name="HLine",      // имя линии
                  double                price=0,           // цена линии 
