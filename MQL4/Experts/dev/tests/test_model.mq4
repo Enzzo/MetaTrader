@@ -28,7 +28,7 @@ CList* list = new CList();
 
 
 // +--------------------------------------+
-// |              int OnInit              |
+// | int OnInit                           |
 // +--------------------------------------+
 int OnInit(){
     b_inps.magic = Magic;
