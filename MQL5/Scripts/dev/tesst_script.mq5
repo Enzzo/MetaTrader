@@ -7,32 +7,18 @@
 #property link      "https://www.mql5.com/ru/users/enzzo"
 #property version   "1.00"
 #property strict
+
+#define MT5
+#include <terminal/scripts/test_script.mqh>
+#include <trade/mm.mqh>
+
+TestScript ts();
+
 //+------------------------------------------------------------------+
 //| Script program start function                                    |
 //+------------------------------------------------------------------+
-
-class some_class{
-public:
-   some_class() 
-      : ptr = new int(1){};
-      
-  ~some_class();
-   
-private:
-   int* ptr;
-}
-
-some_class::~some_class(){
-   if(CheckPointer(ptr)){
-      Print("+");
-   }
-   else{
-      Print("-");
-   }
-}
-
 void OnStart(){
 //---
-   some_class sc;
+   ts.run();
 }
 //+------------------------------------------------------------------+
