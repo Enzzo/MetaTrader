@@ -8,7 +8,6 @@
 #property version   "1.00"
 #property strict
 
-#define MT5
 #include <terminal/scripts/test_script.mqh>
 #include <trade/mm.mqh>
 

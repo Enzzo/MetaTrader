@@ -11,6 +11,7 @@
 #define MT4
 #include <terminal/scripts/test_script.mqh>
 #include <trade/mm.mqh>
+#include <trade/trade.mqh>
 
 TestScript ts();
 
