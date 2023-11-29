@@ -26,24 +26,12 @@ public:
    ulong             TimeDoneMsc(void) const;
    ENUM_ORDER_TYPE   OrderType(void) const;
    string            TypeDescription(void) const;
-
-   #ifndef MT4
    ENUM_ORDER_STATE  State(void) const;
-   #endif
-
    string            StateDescription(void) const;
    datetime          TimeExpiration(void) const;
-
-    #ifndef MT4
-    ENUM_ORDER_TYPE_FILLING TypeFilling(void) const;
-    #endif
-
+   ENUM_ORDER_TYPE_FILLING TypeFilling(void) const;
    string            TypeFillingDescription(void) const;
-
-    #ifndef MT4
-    ENUM_ORDER_TYPE_TIME TypeTime(void) const;
-    #endif
-
+   ENUM_ORDER_TYPE_TIME TypeTime(void) const;
    string            TypeTimeDescription(void) const;
    long              Magic(void) const;
    long              PositionId(void) const;
@@ -130,8 +118,6 @@ string CHistoryOrderInfo::TypeDescription(void) const
 //---
    return(FormatType(str,OrderType()));
   }
-
-#ifndef MT4
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_STATE"                             |
 //+------------------------------------------------------------------+
@@ -148,9 +134,6 @@ string CHistoryOrderInfo::StateDescription(void) const
 //---
    return(FormatStatus(str,State()));
   }
-
-#endif
-
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_TIME_EXPIRATION"                   |
 //+------------------------------------------------------------------+
@@ -158,8 +141,6 @@ datetime CHistoryOrderInfo::TimeExpiration(void) const
   {
    return((datetime)HistoryOrderGetInteger(m_ticket,ORDER_TIME_EXPIRATION));
   }
-
-#ifndef MT4
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_TYPE_FILLING"                      |
 //+------------------------------------------------------------------+
@@ -167,9 +148,6 @@ ENUM_ORDER_TYPE_FILLING CHistoryOrderInfo::TypeFilling(void) const
   {
    return((ENUM_ORDER_TYPE_FILLING)HistoryOrderGetInteger(m_ticket,ORDER_TYPE_FILLING));
   }
-
-#endif
-
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_TYPE_FILLING" as string            |
 //+------------------------------------------------------------------+
@@ -179,8 +157,6 @@ string CHistoryOrderInfo::TypeFillingDescription(void) const
 //---
    return(FormatTypeFilling(str,TypeFilling()));
   }
-
-#ifndef MT4
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_TYPE_TIME"                         |
 //+------------------------------------------------------------------+
@@ -188,8 +164,6 @@ ENUM_ORDER_TYPE_TIME CHistoryOrderInfo::TypeTime(void) const
   {
    return((ENUM_ORDER_TYPE_TIME)HistoryOrderGetInteger(m_ticket,ORDER_TYPE_TIME));
   }
-#endif
-
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_TYPE_TIME" as string               |
 //+------------------------------------------------------------------+

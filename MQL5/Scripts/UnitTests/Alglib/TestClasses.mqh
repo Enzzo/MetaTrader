@@ -76204,6 +76204,7 @@ bool CTestRBFUnit::BasicXRBFTest(void)
    int    nondistinctcnt=0;
    int    termtype=0;
    int    leadingzeros=0;
+   double avx2_epsilon=1e-14;
    CHighQualityRandState rs;
 
    CHighQualityRand::HQRndRandomize(rs);
@@ -76272,14 +76273,14 @@ bool CTestRBFUnit::BasicXRBFTest(void)
                if(nx==2 && ny==1)
                  {
                   CRBF::RBFCalc(s,xzero,y);
-                  CAp::SetErrorFlag(result,CRBF::RBFCalc2(s,x[0],x[1])!=yref[0],"testrbfunit.ap:2847");
+                  CAp::SetErrorFlag(result,MathAbs(CRBF::RBFCalc2(s,x[0],x[1])-yref[0])>avx2_epsilon,"testrbfunit.ap:2847");
                  }
                else
                   CAp::SetErrorFlag(result,CRBF::RBFCalc2(s,1.2,3.4)!=0.0,"testrbfunit.ap:2850");
                if(nx==3 && ny==1)
                  {
                   CRBF::RBFCalc(s,xzero,y);
-                  CAp::SetErrorFlag(result,CRBF::RBFCalc3(s,x[0],x[1],x[2])!=yref[0],"testrbfunit.ap:2856");
+                  CAp::SetErrorFlag(result,MathAbs(CRBF::RBFCalc3(s,x[0],x[1],x[2])-yref[0])>avx2_epsilon,"testrbfunit.ap:2856");
                  }
                else
                   CAp::SetErrorFlag(result,CRBF::RBFCalc3(s,1.2,3.4,5.6)!=0.0,"testrbfunit.ap:2859");

@@ -9,10 +9,9 @@
 #property strict
 
 #include <terminal/scripts/test_script.mqh>
-#include <trade/mm.mqh>
+// #include <terminal/scripts/test_help.mqh>
 
-TestScript ts();
-
+TestScript ts;
 //+------------------------------------------------------------------+
 //| Script program start function                                    |
 //+------------------------------------------------------------------+

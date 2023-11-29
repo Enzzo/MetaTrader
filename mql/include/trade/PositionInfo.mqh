@@ -3,12 +3,7 @@
 //|                             Copyright 2000-2023, MetaQuotes Ltd. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
-#include <object.mqh>
-
-#ifdef MT4
-#include <utils/mt4_adaptor.mqh>
-#endif
-
+#include <Object.mqh>
 //+------------------------------------------------------------------+
 //| Class CPositionInfo.                                             |
 //| Appointment: Class for access to position info.                  |

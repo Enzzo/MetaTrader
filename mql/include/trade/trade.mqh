@@ -3,11 +3,11 @@
 //|                             Copyright 2000-2023, MetaQuotes Ltd. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
-#include <object.mqh>
-#include "orderInfo.mqh"
-#include "history_orderInfo.mqh"
-#include "position_info.mqh"
-#include "deal_info.mqh"
+#include <Object.mqh>
+#include "OrderInfo.mqh"
+#include "HistoryOrderInfo.mqh"
+#include "PositionInfo.mqh"
+#include "DealInfo.mqh"
 //+------------------------------------------------------------------+
 //| enumerations                                                     |
 //+------------------------------------------------------------------+

@@ -14,11 +14,7 @@ class COrderInfo : public CObject
 protected:
    ulong             m_ticket;
    ENUM_ORDER_TYPE   m_type;
-   
-   #ifndef MT4
    ENUM_ORDER_STATE  m_state;
-   #endif
-
    datetime          m_expiration;
    double            m_volume_curr;
    double            m_price_open;
@@ -37,24 +33,12 @@ public:
    ulong             TimeDoneMsc(void) const;
    ENUM_ORDER_TYPE   OrderType(void) const;
    string            TypeDescription(void) const;
-   
-   #ifndef MT4
    ENUM_ORDER_STATE  State(void) const;
-   #endif
-
    string            StateDescription(void) const;
    datetime          TimeExpiration(void) const;
-   
-   #ifndef MT4
    ENUM_ORDER_TYPE_FILLING TypeFilling(void) const;
-   #endif
-   
    string            TypeFillingDescription(void) const;
-   
-   #ifndef MT4
    ENUM_ORDER_TYPE_TIME TypeTime(void) const;
-   #endif
-
    string            TypeTimeDescription(void) const;
    long              Magic(void) const;
    long              PositionId(void) const;
@@ -153,8 +137,6 @@ string COrderInfo::TypeDescription(void) const
 //---
    return(FormatType(str,OrderType()));
   }
-
-#ifndef MT4
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_STATE"                             |
 //+------------------------------------------------------------------+
@@ -162,7 +144,6 @@ ENUM_ORDER_STATE COrderInfo::State(void) const
   {
    return((ENUM_ORDER_STATE)OrderGetInteger(ORDER_STATE));
   }
-
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_STATE" as string                   |
 //+------------------------------------------------------------------+
@@ -172,8 +153,6 @@ string COrderInfo::StateDescription(void) const
 //---
    return(FormatStatus(str,State()));
   }
-#endif
-
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_TIME_EXPIRATION"                   |
 //+------------------------------------------------------------------+
@@ -181,8 +160,6 @@ datetime COrderInfo::TimeExpiration(void) const
   {
    return((datetime)OrderGetInteger(ORDER_TIME_EXPIRATION));
   }
-
-#ifndef MT4
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_TYPE_FILLING"                      |
 //+------------------------------------------------------------------+
@@ -190,8 +167,6 @@ ENUM_ORDER_TYPE_FILLING COrderInfo::TypeFilling(void) const
   {
    return((ENUM_ORDER_TYPE_FILLING)OrderGetInteger(ORDER_TYPE_FILLING));
   }
-#endif
-
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_TYPE_FILLING" as string            |
 //+------------------------------------------------------------------+
@@ -201,8 +176,6 @@ string COrderInfo::TypeFillingDescription(void) const
 //---
    return(FormatTypeFilling(str,TypeFilling()));
   }
-
-#ifndef MT4
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_TYPE_TIME"                         |
 //+------------------------------------------------------------------+
@@ -210,8 +183,6 @@ ENUM_ORDER_TYPE_TIME COrderInfo::TypeTime(void) const
   {
    return((ENUM_ORDER_TYPE_TIME)OrderGetInteger(ORDER_TYPE_TIME));
   }
-#endif
-
 //+------------------------------------------------------------------+
 //| Get the property value "ORDER_TYPE_TIME" as string               |
 //+------------------------------------------------------------------+
@@ -556,11 +527,7 @@ bool COrderInfo::SelectByIndex(const int index)
 void COrderInfo::StoreState(void)
   {
    m_type       =OrderType();
-
-   #ifndef MT4
    m_state      =State();
-   #endif
-
    m_expiration =TimeExpiration();
    m_volume_curr=VolumeCurrent();
    m_price_open =PriceOpen();
@@ -573,11 +540,7 @@ void COrderInfo::StoreState(void)
 bool COrderInfo::CheckState(void)
   {
    if(m_type==OrderType()            &&
-      
-      #ifndef MT4
       m_state==State()               &&
-      #endif
-
       m_expiration==TimeExpiration() &&
       m_volume_curr==VolumeCurrent() &&
       m_price_open==PriceOpen()      &&

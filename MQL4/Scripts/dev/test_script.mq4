@@ -8,12 +8,12 @@
 #property version   "1.00"
 #property strict
 
-#define MT4
-#include <terminal/scripts/test_script.mqh>
-#include <trade/mm.mqh>
-#include <trade/trade.mqh>
+#include <utils/mt4_adaptor.mqh>
 
-TestScript ts();
+#include <terminal/scripts/test_script.mqh>
+// #include <terminal/scripts/test_help.mqh>
+
+TestScript ts;
 
 //+------------------------------------------------------------------+
 //| Script program start function                                    |

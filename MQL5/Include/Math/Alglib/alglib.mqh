@@ -32417,18 +32417,12 @@ void CAlglib::MinNSOptimize(CMinNSState &state,
    if(!CAp::Assert(GetPointer(fvec)!=NULL,"ALGLIB: error in 'MinNSOptimize()' (fvec is null)"))
       return;
 
-   int count=0;
 //--- cycle
    while(MinNSIteration(state))
      {
       if(state.m_needfi)
         {
          fvec.FVec(state.m_x,state.m_fi,obj);
-         count++;
-         if(count==3)
-           {
-            Sleep(0);
-           }
          continue;
         }
       if(state.m_xupdated)

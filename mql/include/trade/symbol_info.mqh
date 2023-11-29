@@ -29,17 +29,9 @@ protected:
    int               m_digits;                     // symbol digits
    int               m_order_mode;                 // symbol valid orders
    ENUM_SYMBOL_TRADE_EXECUTION m_trade_execution;  // symbol trade execution
-   
-   #ifndef MT4
    ENUM_SYMBOL_CALC_MODE m_trade_calcmode;         // symbol trade calcmode
-   #endif
-   
    ENUM_SYMBOL_TRADE_MODE m_trade_mode;            // symbol trade mode
-
-   #ifndef MT4
    ENUM_SYMBOL_SWAP_MODE m_swap_mode;              // symbol swap mode
-   #endif
-
    ENUM_DAY_OF_WEEK  m_swap3;                      // symbol swap3
    double            m_margin_initial;             // symbol margin initial
    double            m_margin_maintenance;         // symbol margin maintenance
@@ -88,11 +80,7 @@ public:
    //--- fast access methods to the mix symbol propertyes
    int               OrderMode(void) const { return(m_order_mode); }
    //--- terms of trade
-
-   #ifndef MT4
    ENUM_SYMBOL_CALC_MODE TradeCalcMode(void)        const { return(m_trade_calcmode); }
-   #endif
-
    string            TradeCalcModeDescription(void) const;
    ENUM_SYMBOL_TRADE_MODE TradeMode(void)           const { return(m_trade_mode);     }
    string            TradeModeDescription(void)     const;
@@ -100,11 +88,7 @@ public:
    ENUM_SYMBOL_TRADE_EXECUTION TradeExecution(void)  const { return(m_trade_execution); }
    string            TradeExecutionDescription(void) const;
    //--- swap terms of trade
-
-   #ifndef MT4
    ENUM_SYMBOL_SWAP_MODE SwapMode(void)                 const { return(m_swap_mode); }
-   #endif
-
    string            SwapModeDescription(void)          const;
    ENUM_DAY_OF_WEEK  SwapRollover3days(void)            const { return(m_swap3);     }
    string            SwapRollover3daysDescription(void) const;
@@ -166,11 +150,7 @@ public:
    bool              InfoInteger(const ENUM_SYMBOL_INFO_INTEGER prop_id,long& var) const;
    bool              InfoDouble(const ENUM_SYMBOL_INFO_DOUBLE prop_id,double& var) const;
    bool              InfoString(const ENUM_SYMBOL_INFO_STRING prop_id,string& var) const;
-
-   #ifndef MT4
    bool              InfoMarginRate(const ENUM_ORDER_TYPE order_type,double& initial_margin_rate,double& maintenance_margin_rate) const;
-   #endif
-
    //--- service methods
    double            NormalizePrice(const double price) const;
    bool              CheckMarketWatch(void);
@@ -193,17 +173,9 @@ CSymbolInfo::CSymbolInfo(void) : m_name(NULL),
                                  m_digits(0),
                                  m_order_mode(0),
                                  m_trade_execution(0),
-                                 
-                                 #ifndef MT4
                                  m_trade_calcmode(0),
-                                 #endif
-
                                  m_trade_mode(0),
-                                 
-                                 #ifndef MT4
                                  m_swap_mode(0),
-                                 #endif
-
                                  m_swap3(0),
                                  m_margin_initial(0.0),
                                  m_margin_maintenance(0.0),
@@ -285,21 +257,13 @@ bool CSymbolInfo::Refresh(void)
    m_trade_execution=(ENUM_SYMBOL_TRADE_EXECUTION)tmp_long;
    if(!SymbolInfoInteger(m_name,SYMBOL_TRADE_CALC_MODE,tmp_long))
       return(false);
-
-   #ifndef MT4
    m_trade_calcmode=(ENUM_SYMBOL_CALC_MODE)tmp_long;
-   #endif
-
    if(!SymbolInfoInteger(m_name,SYMBOL_TRADE_MODE,tmp_long))
       return(false);
    m_trade_mode=(ENUM_SYMBOL_TRADE_MODE)tmp_long;
    if(!SymbolInfoInteger(m_name,SYMBOL_SWAP_MODE,tmp_long))
       return(false);
-
-   #ifndef MT4
    m_swap_mode=(ENUM_SYMBOL_SWAP_MODE)tmp_long;
-   #endif
-
    if(!SymbolInfoInteger(m_name,SYMBOL_SWAP_ROLLOVER3DAYS,tmp_long))
       return(false);
    m_swap3=(ENUM_DAY_OF_WEEK)tmp_long;
@@ -307,14 +271,10 @@ bool CSymbolInfo::Refresh(void)
       return(false);
    if(!SymbolInfoDouble(m_name,SYMBOL_MARGIN_MAINTENANCE,m_margin_maintenance))
       return(false);
-
-   #ifndef MT4
    if(!SymbolInfoDouble(m_name,SYMBOL_MARGIN_HEDGED,m_margin_hedged))
       return(false);
    if(!SymbolInfoInteger(m_name,SYMBOL_MARGIN_HEDGED_USE_LEG,tmp_long))
       return(false);
-   #endif
-
    m_margin_hedged_use_leg=(bool)tmp_long;
    if(!SymbolInfoInteger(m_name,SYMBOL_EXPIRATION_MODE,tmp_long))
       return(false);
@@ -451,7 +411,6 @@ string CSymbolInfo::TradeCalcModeDescription(void) const
   {
    string str;
 //---
-   #ifndef MT4
    switch(m_trade_calcmode)
      {
       case SYMBOL_CALC_MODE_FOREX:
@@ -481,7 +440,6 @@ string CSymbolInfo::TradeCalcModeDescription(void) const
       default:
          str="Unknown calculation mode";
      }
-     #endif
 //--- result
    return(str);
   }
@@ -549,7 +507,6 @@ string CSymbolInfo::SwapModeDescription(void) const
   {
    string str;
 //---
-   #ifndef MT4
    switch(m_swap_mode)
      {
       case SYMBOL_SWAP_MODE_DISABLED:
@@ -582,7 +539,6 @@ string CSymbolInfo::SwapModeDescription(void) const
       default:
          str="Unknown swap mode";
      }
-     #endif
 //--- result
    return(str);
   }
@@ -790,8 +746,6 @@ bool CSymbolInfo::InfoString(const ENUM_SYMBOL_INFO_STRING prop_id,string &var) 
   {
    return(SymbolInfoString(m_name,prop_id,var));
   }
-
-  #ifndef MT4
 //+------------------------------------------------------------------+
 //| Access functions SymbolInfoMarginRate(...)                           |
 //+------------------------------------------------------------------+
@@ -799,8 +753,6 @@ bool CSymbolInfo::InfoMarginRate(const ENUM_ORDER_TYPE order_type,double& initia
   {
    return(SymbolInfoMarginRate(m_name,order_type,initial_margin_rate,maintenance_margin_rate));
   }
-  #endif
-
 //+------------------------------------------------------------------+
 //| Normalize price                                                  |
 //+------------------------------------------------------------------+
@@ -820,14 +772,7 @@ bool CSymbolInfo::CheckMarketWatch(void)
 //--- check if symbol is selected in the MarketWatch
    if(!Select())
      {
-
-      int UNKNOWN_SYMBOL = 4106; // ERR_UNKNOWN_SYMBOL from mq4;
-      
-      #ifndef MT4
-      UNKNOWN_SYMBOL = ERR_MARKET_UNKNOWN_SYMBOL;
-      #endif
-
-      if(GetLastError()==UNKNOWN_SYMBOL)
+      if(GetLastError()==ERR_MARKET_UNKNOWN_SYMBOL)
         {
          printf(__FUNCTION__+": Unknown symbol '%s'",m_name);
          return(false);
