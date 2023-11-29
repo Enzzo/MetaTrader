@@ -1,4 +1,4 @@
-#include <dev\SymbolInfo.mqh>
+#include <trade/symbol_info.mqh>
 
 // +--------------------------------------------------------+
 // |                        class mm                        |

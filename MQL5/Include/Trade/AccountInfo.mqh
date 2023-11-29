@@ -330,7 +330,8 @@ double CAccountInfo::OrderProfitCheck(const string symbol,const ENUM_ORDER_TYPE 
 //|         price           - price of the opening position.         |
 //+------------------------------------------------------------------+
 double CAccountInfo::MarginCheck(const string symbol,const ENUM_ORDER_TYPE trade_operation,
-                                 const double volume,const double price) const {
+                                 const double volume,const double price) const
+  {
    double margin=EMPTY_VALUE;
 //---
    if(!OrderCalcMargin(trade_operation,symbol,volume,price,margin))
@@ -346,7 +347,8 @@ double CAccountInfo::MarginCheck(const string symbol,const ENUM_ORDER_TYPE trade
 //|         price           - price of the opening position.         |
 //+------------------------------------------------------------------+
 double CAccountInfo::FreeMarginCheck(const string symbol,const ENUM_ORDER_TYPE trade_operation,
-                                     const double volume,const double price) const {
+                                     const double volume,const double price) const
+  {
    return(FreeMargin()-MarginCheck(symbol,trade_operation,volume,price));
   }
 //+------------------------------------------------------------------+
