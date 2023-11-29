@@ -15,27 +15,20 @@ protected:
    MqlTick           m_tick;                       // structure of tick;
    double            m_point;                      // symbol point
    double            m_tick_value;                 // symbol tick value
-   double            m_tick_value_profit;          // symbol tick value profit
-   double            m_tick_value_loss;            // symbol tick value loss
    double            m_tick_size;                  // symbol tick size
    double            m_contract_size;              // symbol contract size
    double            m_lots_min;                   // symbol lots min
    double            m_lots_max;                   // symbol lots max
    double            m_lots_step;                  // symbol lots step
-   double            m_lots_limit;                 // symbol lots limit
    double            m_swap_long;                  // symbol swap long
    double            m_swap_short;                 // symbol swap short
    int               m_digits;                     // symbol digits
    int               m_order_mode;                 // symbol valid orders
    ENUM_SYMBOL_TRADE_EXECUTION m_trade_execution;  // symbol trade execution
-   // ENUM_SYMBOL_CALC_MODE m_trade_calcmode;         // symbol trade calcmode
    ENUM_SYMBOL_TRADE_MODE m_trade_mode;            // symbol trade mode
-   // ENUM_SYMBOL_SWAP_MODE m_swap_mode;              // symbol swap mode
    ENUM_DAY_OF_WEEK  m_swap3;                      // symbol swap3
    double            m_margin_initial;             // symbol margin initial
    double            m_margin_maintenance;         // symbol margin maintenance
-   bool              m_margin_hedged_use_leg;      // calculate hedged margin using larger leg
-   double            m_margin_hedged;              // symbol margin hedged
    int               m_trade_time_flags;           // symbol trade time flags
    int               m_trade_fill_flags;           // symbol trade fill flags
 
@@ -79,7 +72,6 @@ public:
    //--- fast access methods to the mix symbol propertyes
    int               OrderMode(void) const { return(m_order_mode); }
    //--- terms of trade
-   // ENUM_SYMBOL_CALC_MODE TradeCalcMode(void)        const { return(m_trade_calcmode); }
    string            TradeCalcModeDescription(void) const;
    ENUM_SYMBOL_TRADE_MODE TradeMode(void)           const { return(m_trade_mode);     }
    string            TradeModeDescription(void)     const;
@@ -87,7 +79,6 @@ public:
    ENUM_SYMBOL_TRADE_EXECUTION TradeExecution(void)  const { return(m_trade_execution); }
    string            TradeExecutionDescription(void) const;
    //--- swap terms of trade
-   // ENUM_SYMBOL_SWAP_MODE SwapMode(void)                 const { return(m_swap_mode); }
    string            SwapModeDescription(void)          const;
    ENUM_DAY_OF_WEEK  SwapRollover3days(void)            const { return(m_swap3);     }
    string            SwapRollover3daysDescription(void) const;
@@ -97,8 +88,6 @@ public:
    //--- margin parameters
    double            MarginInitial(void)      const { return(m_margin_initial);        }
    double            MarginMaintenance(void)  const { return(m_margin_maintenance);    }
-   bool              MarginHedgedUseLeg(void) const { return(m_margin_hedged_use_leg); }
-   double            MarginHedged(void)       const { return(m_margin_hedged);         }
    //--- left for backward compatibility
    double            MarginLong(void)      const { return(0.0); }
    double            MarginShort(void)     const { return(0.0); }
@@ -112,15 +101,12 @@ public:
    int               Digits(void)          const { return(m_digits);            }
    double            Point(void)           const { return(m_point);             }
    double            TickValue(void)       const { return(m_tick_value);        }
-   double            TickValueProfit(void) const { return(m_tick_value_profit); }
-   double            TickValueLoss(void)   const { return(m_tick_value_loss);   }
    double            TickSize(void)        const { return(m_tick_size);         }
    //--- lots parameters
    double            ContractSize(void) const { return(m_contract_size); }
    double            LotsMin(void)      const { return(m_lots_min);      }
    double            LotsMax(void)      const { return(m_lots_max);      }
    double            LotsStep(void)     const { return(m_lots_step);     }
-   double            LotsLimit(void)    const { return(m_lots_limit);    }
    //--- swaps
    double            SwapLong(void)  const { return(m_swap_long);  }
    double            SwapShort(void) const { return(m_swap_short); }
@@ -160,8 +146,6 @@ public:
 CSymbolInfo::CSymbolInfo(void) : m_name(NULL),
                                  m_point(0.0),
                                  m_tick_value(0.0),
-                                 m_tick_value_profit(0.0),
-                                 m_tick_value_loss(0.0),
                                  m_tick_size(0.0),
                                  m_contract_size(0.0),
                                  m_lots_min(0.0),
@@ -172,14 +156,10 @@ CSymbolInfo::CSymbolInfo(void) : m_name(NULL),
                                  m_digits(0),
                                  m_order_mode(0),
                                  m_trade_execution(0),
-                                 // m_trade_calcmode(0),
                                  m_trade_mode(0),
-                                 // m_swap_mode(0),
                                  m_swap3(0),
                                  m_margin_initial(0.0),
                                  m_margin_maintenance(0.0),
-                                 m_margin_hedged_use_leg(false),
-                                 m_margin_hedged(0.0),
                                  m_trade_time_flags(0),
                                  m_trade_fill_flags(0)
   {
@@ -225,10 +205,6 @@ bool CSymbolInfo::Refresh(void)
       return(false);
    if(!SymbolInfoDouble(m_name,SYMBOL_TRADE_TICK_VALUE,m_tick_value))
       return(false);
-   if(!SymbolInfoDouble(m_name,SYMBOL_TRADE_TICK_VALUE_PROFIT,m_tick_value_profit))
-      return(false);
-   if(!SymbolInfoDouble(m_name,SYMBOL_TRADE_TICK_VALUE_LOSS,m_tick_value_loss))
-      return(false);
    if(!SymbolInfoDouble(m_name,SYMBOL_TRADE_TICK_SIZE,m_tick_size))
       return(false);
    if(!SymbolInfoDouble(m_name,SYMBOL_TRADE_CONTRACT_SIZE,m_contract_size))
@@ -239,8 +215,6 @@ bool CSymbolInfo::Refresh(void)
       return(false);
    if(!SymbolInfoDouble(m_name,SYMBOL_VOLUME_STEP,m_lots_step))
       return(false);
-   if(!SymbolInfoDouble(m_name,SYMBOL_VOLUME_LIMIT,m_lots_limit))
-      return(false);
    if(!SymbolInfoDouble(m_name,SYMBOL_SWAP_LONG,m_swap_long))
       return(false);
    if(!SymbolInfoDouble(m_name,SYMBOL_SWAP_SHORT,m_swap_short))
@@ -248,21 +222,17 @@ bool CSymbolInfo::Refresh(void)
    if(!SymbolInfoInteger(m_name,SYMBOL_DIGITS,tmp_long))
       return(false);
    m_digits=(int)tmp_long;
-   if(!SymbolInfoInteger(m_name,SYMBOL_ORDER_MODE,tmp_long))
-      return(false);
    m_order_mode=(int)tmp_long;
    if(!SymbolInfoInteger(m_name,SYMBOL_TRADE_EXEMODE,tmp_long))
       return(false);
    m_trade_execution=(ENUM_SYMBOL_TRADE_EXECUTION)tmp_long;
    if(!SymbolInfoInteger(m_name,SYMBOL_TRADE_CALC_MODE,tmp_long))
       return(false);
-   // m_trade_calcmode=(ENUM_SYMBOL_CALC_MODE)tmp_long;
    if(!SymbolInfoInteger(m_name,SYMBOL_TRADE_MODE,tmp_long))
       return(false);
    m_trade_mode=(ENUM_SYMBOL_TRADE_MODE)tmp_long;
    if(!SymbolInfoInteger(m_name,SYMBOL_SWAP_MODE,tmp_long))
       return(false);
-   //  m_swap_mode=(ENUM_SYMBOL_SWAP_MODE)tmp_long;
    if(!SymbolInfoInteger(m_name,SYMBOL_SWAP_ROLLOVER3DAYS,tmp_long))
       return(false);
    m_swap3=(ENUM_DAY_OF_WEEK)tmp_long;
@@ -270,16 +240,7 @@ bool CSymbolInfo::Refresh(void)
       return(false);
    if(!SymbolInfoDouble(m_name,SYMBOL_MARGIN_MAINTENANCE,m_margin_maintenance))
       return(false);
-   // if(!SymbolInfoDouble(m_name,SYMBOL_MARGIN_HEDGED,m_margin_hedged))
-   //    return(false);
-   // if(!SymbolInfoInteger(m_name,SYMBOL_MARGIN_HEDGED_USE_LEG,tmp_long))
-   //    return(false);
-   m_margin_hedged_use_leg=(bool)tmp_long;
-   if(!SymbolInfoInteger(m_name,SYMBOL_EXPIRATION_MODE,tmp_long))
-      return(false);
    m_trade_time_flags=(int)tmp_long;
-   if(!SymbolInfoInteger(m_name,SYMBOL_FILLING_MODE,tmp_long))
-      return(false);
    m_trade_fill_flags=(int)tmp_long;
 //--- succeed
    return(true);
@@ -404,45 +365,6 @@ double CSymbolInfo::LastLow(void) const
    return(SymbolInfoDouble(m_name,SYMBOL_LASTLOW));
   }
 //+------------------------------------------------------------------+
-//| Get the property value "SYMBOL_TRADE_CALC_MODE" as string        |
-//+------------------------------------------------------------------+
-string CSymbolInfo::TradeCalcModeDescription(void) const
-  {
-   string str = "Unknown calculation mode";
-//---
-   /* switch(m_trade_calcmode)
-     {
-      case SYMBOL_CALC_MODE_FOREX:
-         str="Calculation of profit and margin for Forex";
-         break;
-      case SYMBOL_CALC_MODE_CFD:
-         str="Calculation of collateral and earnings for CFD";
-         break;
-      case SYMBOL_CALC_MODE_FUTURES:
-         str="Calculation of collateral and profits for futures";
-         break;
-      case SYMBOL_CALC_MODE_CFDINDEX:
-         str="Calculation of collateral and earnings for CFD on indices";
-         break;
-      case SYMBOL_CALC_MODE_CFDLEVERAGE:
-         str="Calculation of collateral and earnings for the CFD when trading with leverage";
-         break;
-      case SYMBOL_CALC_MODE_EXCH_STOCKS:
-         str="Calculation for exchange stocks";
-         break;
-      case SYMBOL_CALC_MODE_EXCH_FUTURES:
-         str="Calculation for exchange futures";
-         break;
-      case SYMBOL_CALC_MODE_EXCH_FUTURES_FORTS:
-         str="Calculation for FORTS futures";
-         break;
-      default:
-         str="Unknown calculation mode";
-     }*/
-//--- result
-   return(str);
-  }
-//+------------------------------------------------------------------+
 //| Get the property value "SYMBOL_TRADE_MODE" as string             |
 //+------------------------------------------------------------------+
 string CSymbolInfo::TradeModeDescription(void) const
@@ -496,48 +418,6 @@ string CSymbolInfo::TradeExecutionDescription(void) const
       default:
          str="Unknown trade execution";
      }
-//--- result
-   return(str);
-  }
-//+------------------------------------------------------------------+
-//| Get the property value "SYMBOL_SWAP_MODE" as string              |
-//+------------------------------------------------------------------+
-string CSymbolInfo::SwapModeDescription(void) const
-  {
-   string str = "Unknown swap mode";
-//---
-   /* switch(m_swap_mode)
-     {
-      case SYMBOL_SWAP_MODE_DISABLED:
-         str="No swaps";
-         break;
-      case SYMBOL_SWAP_MODE_POINTS:
-         str="Swaps are calculated in points";
-         break;
-      case SYMBOL_SWAP_MODE_CURRENCY_SYMBOL:
-         str="Swaps are calculated in base currency";
-         break;
-      case SYMBOL_SWAP_MODE_CURRENCY_MARGIN:
-         str="Swaps are calculated in margin currency";
-         break;
-      case SYMBOL_SWAP_MODE_CURRENCY_DEPOSIT:
-         str="Swaps are calculated in deposit currency";
-         break;
-      case SYMBOL_SWAP_MODE_INTEREST_CURRENT:
-         str="Swaps are calculated as annual interest using the current price";
-         break;
-      case SYMBOL_SWAP_MODE_INTEREST_OPEN:
-         str="Swaps are calculated as annual interest using the open price";
-         break;
-      case SYMBOL_SWAP_MODE_REOPEN_CURRENT:
-         str="Swaps are charged by reopening positions at the close price";
-         break;
-      case SYMBOL_SWAP_MODE_REOPEN_BID:
-         str="Swaps are charged by reopening positions at the Bid price";
-         break;
-      default:
-         str="Unknown swap mode";
-     }*/
 //--- result
    return(str);
   }

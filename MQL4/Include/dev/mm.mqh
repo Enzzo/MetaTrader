@@ -70,7 +70,7 @@ const double mm::auto_lot(double risk,int points,double comission = 0.0)const{
 //                  short get_lot_digits                    |
 //----------------------------------------------------------+
 short mm::get_lot_digits() const{
-   double step = SymbolInfoDouble(Symbol(), SYMBOL_VOLUME_STEP);
+   double step = SymbolInfoDouble(_symbol.Name(), SYMBOL_VOLUME_STEP);
    short d = 0;
 
    while(step < 1.0){
