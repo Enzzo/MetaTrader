@@ -9,7 +9,7 @@
 #property strict
 
 #include <terminal/scripts/test_script.mqh>
-// #include <terminal/scripts/test_help.mqh>
+#include <terminal/scripts/test_help.mqh>
 
 TestScript ts;
 //+------------------------------------------------------------------+

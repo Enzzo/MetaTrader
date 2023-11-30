@@ -11,7 +11,7 @@
 #include <utils/mt4_adaptor.mqh>
 
 #include <terminal/scripts/test_script.mqh>
-// #include <terminal/scripts/test_help.mqh>
+#include <terminal/scripts/test_help.mqh>
 
 TestScript ts;
 
