@@ -29,8 +29,7 @@ private:
 
 };
 
-double mm::optimal_f(string symbol, ENUM_ORDER_TYPE op_type, double open_price, double stop_loss, double f)
-{
+double mm::optimal_f(string symbol, ENUM_ORDER_TYPE op_type, double open_price, double stop_loss, double f){
    double point;
    double tick_value;
    double min_risk;
