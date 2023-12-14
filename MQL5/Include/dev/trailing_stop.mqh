@@ -1,47 +1,124 @@
 #include <Object.mqh>
 #include <trade\PositionInfo.mqh>
 
+//  +-------------------------------------------------------------------------------+
+//  |   ENUM_TRAL_TYPE                                                              |
+//  +-------------------------------------------------------------------------------+
+//  |   
 enum ENUM_TRAL_TYPE{
     NONE,
-    TRAL_BREAKEVEN = 1,
-    TRAL_POINTS = 2,
-    TRAL_MA = 4,
-    TRAL_PARABOLIC = 8
+    TRAL_BREAKEVEN  = 1 << 0,
+    TRAL_POINTS     = 1 << 1,
+    TRAL_MA         = 1 << 2,
+    TRAL_PARABOLIC  = 1 << 3
 };
 
+//  +-------------------------------------------------------------------------------+
+//  |   TrailingStop                                                                |
+//  +-------------------------------------------------------------------------------+
+//  |   Класс позволяет выставлять безупыток и тралить стоплоссы открытых позиций   |
+//  +-------------------------------------------------------------------------------+
+//  |   _show_alert   - флаг служит для отображения критически-важной информации    |
+//  |                   срабатывает только один раз в функции Run(), затем пере-    |
+//  |                   ключается в состояние false                                 |
+//  +-------------------------------------------------------------------------------+
+//  |   _tral_type    - способ трала (безубыток и прочие)                           |
+//  |                   Если равен 0, то трал работать не будет                     |
+//  +-------------------------------------------------------------------------------+
+//  |   _magic        - идентификатор позиций, с которыми может работать этот трал  |
+//  |                   Если равен 0, то 
 class TrailingStop : public CObject{
 public:
     TrailingStop()
-        : _tral_type(0)
+        : _show_alert(true)
+        , _tral_type(0)
         , _magic(0)
         , _symbol(""){};
 
-    TrailingStop* SetTralType(ushort tral_type){
-        _tral_type = tral_type;
-        return &this;
-    }
-
-    TrailingStop* SetMagic(int magic){
-        _magic = magic;
-        return &this;
-    }
-
-    TrailingStop* SetSymbol(string symbol){
-        _symbol = symbol;
-        return &this;
-    }
+    TrailingStop* SetTralType(ushort tral_type);
+    TrailingStop* SetMagic(int magic);
+    TrailingStop* SetSymbol(string symbol);
 
     ushort GetTralType()const{return _tral_type;};
 
-    void Display() const{
-        if((_tral_type & TRAL_BREAKEVEN) == TRAL_BREAKEVEN) Print("Breakeven");
-        if((_tral_type & TRAL_POINTS) == TRAL_POINTS) Print("Points");
-        if((_tral_type & TRAL_MA) == TRAL_MA) Print("MA");
-        if((_tral_type & TRAL_PARABOLIC) == TRAL_PARABOLIC) Print("Parabolic");
-    }
+    void Run() const;
+    void ShowAlert() const;
+    void Display() const;
+
 private:
+    bool            _show_alert;    // предупреждает, если не заданы _tral_type, _magic, или _symbol. После срабаывания этот флаг выключается в методе Run()
     ushort          _tral_type;
     int             _magic;
     string          _symbol;
     CPositionInfo*  _position;
 };
+//  +-------------------------------------------------------------------------------+
+//  |   TrailingStop                                                                |
+//  +-------------------------------------------------------------------------------+
+//  |   Run                                                                         |
+//  +-------------------------------------------------------------------------------+
+void TrailingStop::Run()const{
+
+}
+
+//  +-------------------------------------------------------------------------------+
+//  |   TrailingStop                                                                |
+//  +-------------------------------------------------------------------------------+
+//  |   ShowAlert                                                                   |
+//  +-------------------------------------------------------------------------------+
+void TrailingStop::ShowAlert()const{
+    string alert_info = "";
+    if(_tral_type == 0){
+        alert_info = "Не выбран ни один тип для трала.";
+    }
+    else{
+        if(_magic == 0){
+            alert_info = "MAGIC равен нулю. Советник будет тралить ордера, не обращая внимание на MAGIC.";
+        }
+        if(_symbol == ""){
+            alert_info += "Symbol не задан"
+        }
+    }
+}
+
+//  +-------------------------------------------------------------------------------+
+//  |   TrailingStop                                                                |
+//  +-------------------------------------------------------------------------------+
+//  |   Display                                                                     |
+//  +-------------------------------------------------------------------------------+
+void TrailingStop::Display() const{
+    if((_tral_type & TRAL_BREAKEVEN) == TRAL_BREAKEVEN) Print("Breakeven");
+    if((_tral_type & TRAL_POINTS) == TRAL_POINTS) Print("Points");
+    if((_tral_type & TRAL_MA) == TRAL_MA) Print("MA");
+    if((_tral_type & TRAL_PARABOLIC) == TRAL_PARABOLIC) Print("Parabolic");
+}
+
+//  +-------------------------------------------------------------------------------+
+//  |   TrailingStop                                                                |
+//  +-------------------------------------------------------------------------------+
+//  |   SetTralType                                                                 |
+//  +-------------------------------------------------------------------------------+
+TrailingStop* TrailingStop::SetTralType(ushort tral_type){
+    _tral_type = tral_type;
+    return &this;
+}
+
+//  +-------------------------------------------------------------------------------+
+//  |   TrailingStop                                                                |
+//  +-------------------------------------------------------------------------------+
+//  |   SetMagic                                                                    |
+//  +-------------------------------------------------------------------------------+
+TrailingStop* TrailingStop::SetMagic(int magic){
+    _magic = magic;
+    return &this;
+}
+
+//  +-------------------------------------------------------------------------------+
+//  |   TrailingStop                                                                |
+//  +-------------------------------------------------------------------------------+
+//  |   SetSymbol                                                                   |
+//  +-------------------------------------------------------------------------------+
+TrailingStop* TrailingStop::SetSymbol(string symbol){
+    _symbol = symbol;
+    return &this;
+}
