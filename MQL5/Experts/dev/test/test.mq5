@@ -7,41 +7,34 @@
 #property link      "https://www.mql5.com/ru/users/enzzo"
 #property version   "1.00"
 
-class some_class{
-public:
-   some_class() 
-      : _ptr(new int(1)){};
-      
-  ~some_class();
-   
-private:
-   int* _ptr;
-};
+#define DEBUG
+
+#include <dev/trailing_stop.mqh>
+
+TrailingStop tral;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
-int OnInit()
-  {
+int OnInit(){
 //---
-   
+   tral.EnableBreakeven();
+   tral.Run();
 //---
    return(INIT_SUCCEEDED);
-  }
+}
 //+------------------------------------------------------------------+
 //| Expert deinitialization function                                 |
 //+------------------------------------------------------------------+
-void OnDeinit(const int reason)
-  {
+void OnDeinit(const int reason){
 //---
    
-  }
+}
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
-void OnTick()
-  {
+void OnTick(){
 //---
    
-  }
+}
 //+------------------------------------------------------------------+
