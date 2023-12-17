@@ -1,6 +1,8 @@
 #include <Object.mqh>
-#include <trade\PositionInfo.mqh>
 
+#ifdef DEBUG
+#include <dev\time_duration.mqh>
+#endif
 //  +-------------------------------------------------------------------------------+
 //  |   ENUM_TRAL_TYPE                                                              |
 //  +-------------------------------------------------------------------------------+
@@ -62,18 +64,19 @@ public:
     #endif
 
 private:
-    bool IsBreakeven()      const{return (_tral_type & TRAL_BREAKEVEN)  == TRAL_BREAKEVEN;};
-    bool IsTralPoints()     const{return (_tral_type & TRAL_POINTS)     == TRAL_POINTS;};
-    bool IsTralCandles()    const{return (_tral_type & TRAL_CANDLES)    == TRAL_CANDLES;};
-    bool IsTralMA()         const{return (_tral_type & TRAL_MA)         == TRAL_MA;};
-    bool IsTralParabolic()  const{return (_tral_type & TRAL_PARABOLIC)  == TRAL_PARABOLIC;};
+    void Modify(long ticket) const;
+
+    inline bool IsBreakeven()      const{return (_tral_type & TRAL_BREAKEVEN)  == TRAL_BREAKEVEN;};
+    inline bool IsTralPoints()     const{return (_tral_type & TRAL_POINTS)     == TRAL_POINTS;};
+    inline bool IsTralCandles()    const{return (_tral_type & TRAL_CANDLES)    == TRAL_CANDLES;};
+    inline bool IsTralMA()         const{return (_tral_type & TRAL_MA)         == TRAL_MA;};
+    inline bool IsTralParabolic()  const{return (_tral_type & TRAL_PARABOLIC)  == TRAL_PARABOLIC;};
 
 private:
     bool            _show_alert;    // предупреждает, если не заданы _tral_type, _magic, или _symbol. После срабаывания этот флаг выключается в методе Run()
     ushort          _tral_type;
     int             _magic;
     string          _symbol;
-    CPositionInfo*  _position;
 
     // breakeven setup:
     ushort _be_target_step, _be_offset;
@@ -95,6 +98,8 @@ void TrailingStop::Run()const{
                 #ifdef DEBUG
                     Print("Found position: "+symbol+" "+IntegerToString(magic));
                 #endif
+
+                // Modify(PositionGetTicket(i));
             }
     }
 }
@@ -164,4 +169,21 @@ TrailingStop* TrailingStop::AddSymbol(string symbol){
 void TrailingStop::EnableBreakeven(ushort target_step = 100, ushort offset = 10){
     _tral_type |= TRAL_BREAKEVEN;
     _be_target_step = target_step; _be_offset = offset;
+}
+
+//  +-------------------------------------------------------------------------------+
+//  |   TrailingStop                                                                |
+//  +-------------------------------------------------------------------------------+
+//  |   Modify                                                                      |
+//  +-------------------------------------------------------------------------------+
+void TrailingStop::Modify(long ticket)const {
+    ENUM_POSITION_TYPE type = (ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
+    double price_open   = PositionGetDouble(POSITION_PRICE_OPEN);
+    double stop_loss    = PositionGetDouble(POSITION_SL);
+
+    #ifdef DEBUG
+        Print("Price open: "+price_open+"\nstop_loss: "+stop_loss);
+    #endif
+
+    
 }

@@ -9,7 +9,7 @@
 
 #define DEBUG
 
-#include <dev/trailing_stop.mqh>
+#include <dev/TrailingStop.mqh>
 
 TrailingStop tral;
 
@@ -18,8 +18,10 @@ TrailingStop tral;
 //+------------------------------------------------------------------+
 int OnInit(){
 //---
+   EventSetTimer(5);
+   
    tral.EnableBreakeven();
-   tral.Run();
+   
 //---
    return(INIT_SUCCEEDED);
 }
@@ -28,7 +30,7 @@ int OnInit(){
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason){
 //---
-   
+   EventKillTimer();
 }
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
@@ -38,3 +40,7 @@ void OnTick(){
    
 }
 //+------------------------------------------------------------------+
+
+void OnTimer(){
+   tral.Run();   
+}
