@@ -182,8 +182,6 @@ void TrailingStop::Modify(long ticket)const {
     double stop_loss    = PositionGetDouble(POSITION_SL);
 
     #ifdef DEBUG
-        Print("Price open: "+price_open+"\nstop_loss: "+stop_loss);
-    #endif
-
-    
+        Print("Price open: "+DoubleToString(price_open, 4)+"\nstop_loss: "+DoubleToString(stop_loss, 4));
+    #endif    
 }
