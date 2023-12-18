@@ -1,7 +1,8 @@
 #include <Object.mqh>
+#include <trade/PositionInfo.mqh>
 
 #ifdef DEBUG
-#include <dev\time_duration.mqh>
+#include <dev/time_duration.mqh>
 #endif
 //  +-------------------------------------------------------------------------------+
 //  |   ENUM_TRAL_TYPE                                                              |
@@ -64,13 +65,13 @@ public:
     #endif
 
 private:
-    void Modify(long ticket) const;
+    void Modify(CPositionInfo*) const;
 
-    inline bool IsBreakeven()      const{return (_tral_type & TRAL_BREAKEVEN)  == TRAL_BREAKEVEN;};
-    inline bool IsTralPoints()     const{return (_tral_type & TRAL_POINTS)     == TRAL_POINTS;};
-    inline bool IsTralCandles()    const{return (_tral_type & TRAL_CANDLES)    == TRAL_CANDLES;};
-    inline bool IsTralMA()         const{return (_tral_type & TRAL_MA)         == TRAL_MA;};
-    inline bool IsTralParabolic()  const{return (_tral_type & TRAL_PARABOLIC)  == TRAL_PARABOLIC;};
+    inline bool IsBreakevenEnabled()      const{return (_tral_type & TRAL_BREAKEVEN)  == TRAL_BREAKEVEN;};
+    inline bool IsTralPointsEnabled()     const{return (_tral_type & TRAL_POINTS)     == TRAL_POINTS;};
+    inline bool IsTralCandlesEnabled()    const{return (_tral_type & TRAL_CANDLES)    == TRAL_CANDLES;};
+    inline bool IsTralMAEnabled()         const{return (_tral_type & TRAL_MA)         == TRAL_MA;};
+    inline bool IsTralParabolicEnabled()  const{return (_tral_type & TRAL_PARABOLIC)  == TRAL_PARABOLIC;};
 
 private:
     bool            _show_alert;    // предупреждает, если не заданы _tral_type, _magic, или _symbol. После срабаывания этот флаг выключается в методе Run()
@@ -95,11 +96,7 @@ void TrailingStop::Run()const{
 
         if( (_symbol == "" || _symbol == symbol) &&
             (_magic == 0 || _magic == magic)){
-                #ifdef DEBUG
-                    Print("Found position: "+symbol+" "+IntegerToString(magic));
-                #endif
-
-                // Modify(PositionGetTicket(i));
+                Modify(new CPositionInfo());
             }
     }
 }
@@ -116,10 +113,10 @@ void TrailingStop::ShowAlert()const{
     }
     else{
         if(_magic == 0){
-            alert_info = "MAGIC равен нулю. Советник будет тралить ордера, не обращая внимание на MAGIC.";
+            alert_info = "MAGIC равен нулю. Советник будет тралить стопы, не обращая внимание на MAGIC.";
         }
         if(_symbol == ""){
-            alert_info += "Symbol не задан. Советник будет тралить ордера, не обращая внимание на Symbol.";
+            alert_info += "Symbol не задан. Советник будет тралить стопы, не обращая внимание на Symbol.";
         }
     }
 }
@@ -131,11 +128,11 @@ void TrailingStop::ShowAlert()const{
 //  |   Display                                                                     |
 //  +-------------------------------------------------------------------------------+
 void TrailingStop::Display() const{
-    if(IsBreakeven())       Print("Breakeven");
-    if(IsTralCandles())     Print("Candles");
-    if(IsTralPoints())      Print("Points");
-    if(IsTralMA())          Print("MA");
-    if(IsTralParabolic())   Print("Parabolic");
+    if(IsBreakevenEnabled())       Print("Breakeven");
+    if(IsTralCandlesEnabled())     Print("Candles");
+    if(IsTralPointsEnabled())      Print("Points");
+    if(IsTralMAEnabled())          Print("MA");
+    if(IsTralParabolicEnabled())   Print("Parabolic");
 }
 #endif
 
@@ -176,12 +173,23 @@ void TrailingStop::EnableBreakeven(ushort target_step = 100, ushort offset = 10)
 //  +-------------------------------------------------------------------------------+
 //  |   Modify                                                                      |
 //  +-------------------------------------------------------------------------------+
-void TrailingStop::Modify(long ticket)const {
+void TrailingStop::Modify(CPositionInfo* p)const {
+    // Сначала определяем направление позиции
+    // а затем ищем уровни, по которым тралим стопы
     ENUM_POSITION_TYPE type = (ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
     double price_open   = PositionGetDouble(POSITION_PRICE_OPEN);
     double stop_loss    = PositionGetDouble(POSITION_SL);
 
     #ifdef DEBUG
-        Print("Price open: "+DoubleToString(price_open, 4)+"\nstop_loss: "+DoubleToString(stop_loss, 4));
-    #endif    
+        Print("Price open: "+p.PriceOpen()+"\nStop_loss: "+p.StopLoss());
+    #endif
+
+    if(IsBreakevenEnabled()){
+        if(type == POSITION_TYPE_BUY){
+            double ask = SymbolInfoDouble(PositionGetString(POSITION_SYMBOL), SYMBOL_ASK);
+        }
+        if(type == POSITION_TYPE_SELL){
+            double bid = SymbolInfoDouble(PositionGetString(POSITION_SYMBOL), SYMBOL_BID);
+        }
+    }
 }
