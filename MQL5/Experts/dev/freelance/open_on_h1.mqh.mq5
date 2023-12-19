@@ -6,29 +6,27 @@
 #property copyright "Sergey Vasilev"
 #property link      "https://www.mql5.com/ru/users/enzzo"
 #property version   "1.00"
-#property description "бот для выставление двух отложенных Stop ордеров от текущей цены Bid"
+#property description "бот для выставления двух отложенных Stop ордеров от текущей цены Bid"
 #property description "на открытии нового часа (Н1) на определенном расстоянии"
 #property description "от цены +/- N пунктов. Уровни Т/Р и S/L, треллинг стоп не уходящий в минус."
 #property description "При открытии одного ордера – второй удаляется."
 
-#include <dev\trailing_stop.mqh>
+#define DEBUG
+
+#include <dev/freelance/open_on_h1.mqh>
 
 input int MAGIC = 9999;
 input int TP = 30;
 input int SL = 10;
-input ENUM_TRAL_TYPE tral_type1 = NONE;
-input ENUM_TRAL_TYPE tral_type2 = NONE;
-input ENUM_TRAL_TYPE tral_type3 = NONE;
-input ENUM_TRAL_TYPE tral_type4 = NONE;
+input int OFFSET = 20;
 
-TrailingStop* tral;
+OpenOnH1Model h1_model;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit(){
-//---
-  tral.SetTralType((ushort)(tral_type1 | tral_type2 | tral_type3 | tral_type4)).SetMagic(MAGIC).SetSymbol(Symbol());
-  tral.Display();  
+  h1_model.Init(MAGIC, Symbol(), OFFSET, TP, SL);
+
 //---
   return(INIT_SUCCEEDED);
 }
@@ -44,6 +42,6 @@ void OnDeinit(const int reason){
 //+------------------------------------------------------------------+
 void OnTick(){
 //---
-   
+   h1_model.Proccessing();
 }
 //+------------------------------------------------------------------+
