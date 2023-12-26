@@ -6,6 +6,7 @@ public:
     OpenOnH1Model(){};
 
     void Init(int magic, string symbol, int offset, int tp, int sl){
+        _orders_placed = false;
         _magic  = magic;
         _symbol = symbol;
         _offset = offset;
@@ -36,8 +37,10 @@ public:
 private:
     inline  bool IsNewHour()    const;
     inline  int TotalOrdersOnHour() const;
+            bool PlaceOrders();
 
 private:
+    bool _orders_placed;
     int _magic, _tp, _sl, _offset;
     string _symbol;
 };
@@ -45,14 +48,15 @@ private:
 // Функция, которая будет выполняться в блоке OnTick()
 void OpenOnH1Model::Proccessing(){
     if(IsNewHour()){
-        
+        _orders_placed = false;
         #ifdef DEBUG
             Print("Is new hour!");
         #endif
+        // сбрасываем флаг
+    }
 
-        if(TotalOrdersOnHour() < 2){
-            // while(!SetOrders()){};
-        }
+    if(!_orders_placed && TotalOrdersOnHour() < 2){
+        _orders_placed = PlaceOrders();
     }
 }
 
@@ -91,4 +95,18 @@ int OpenOnH1Model::TotalOrdersOnHour() const{
     }
 
     return count;
+}
+
+bool OpenOnH1Model::PlaceOrders(){
+    
+    // Определить уровень открытия предыдущего часа
+    double h1_open[];
+    CopyOpen(_symbol, PERIOD_H1, 1, 1, h1_open);
+    
+    // Рассчитать уровни для ордеров, используя уровень открытия и сдвиги
+    double buy_stop = h1_open[0] + NormalizeDouble(_offset * Points(), Digits())
+
+    // Разместить два ордера на этих уровнях
+
+    return false;
 }
